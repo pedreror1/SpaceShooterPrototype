@@ -39,8 +39,10 @@ public class GameManager : MonoBehaviour
             yield return timerCycleLapse;
             TimeRemaining--;
             timeText.text = TimeRemaining.ToString().PadLeft(2, '0');
-
+           
         }
+        Player.instance.CanMove = false;
+        Player.instance.CanAttack = false;
     }
     public void changeState(int newState)
     {
@@ -51,6 +53,9 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(GameTime());
                 MainMenuUI.SetActive(false);
                 GameUI.SetActive(true);
+                Player.instance.CanMove = true;
+                Player.instance.CanAttack = true;
+                Cursor.visible = false;
                 break;
         }
     }

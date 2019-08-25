@@ -27,5 +27,9 @@ public class bullet : MonoBehaviour
         transform.position += transform.forward * speed;
         transform.Rotate(0f, 0f, 10f);
         checkCollision();
+        if(Vector3.Distance(Player.instance.transform.position,transform.position)>1250f)
+        {
+            PoolSystem.Instance.AddtoPool(gameObject);
+        }
     }
 }

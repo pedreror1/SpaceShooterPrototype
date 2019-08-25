@@ -7,7 +7,7 @@ public class PlayerWeapons : MonoBehaviour
     [SerializeField]
     Transform shootPos1,shootPos2,haircross,spaceShip;
     List<bullet> bulletPool = new List<bullet>();
-    public bullet bulletPrefab;
+    [SerializeField] Projectile projectilePrefab;
     bool canshoot = true;
     Transform currentBullet1, currentBullet2;
     Vector3 haircrossDirection;
@@ -16,20 +16,43 @@ public class PlayerWeapons : MonoBehaviour
     {
         
     }
-
+    void shootBullets()
+    {
+        currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+        currentBullet1.position = shootPos1.position;
+        currentBullet1.rotation = shootPos1.rotation;
+        currentBullet2 = PoolSystem.Instance.getFromPool().transform;
+        currentBullet2.position = shootPos2.position;
+        currentBullet2.rotation = shootPos2.rotation;
+        bulletPool.Add(currentBullet1.GetComponent<bullet>());
+        bulletPool.Add(currentBullet2.GetComponent<bullet>());
+        haircrossDirection = haircross.forward;
+    }
+    void shootProjectiles()
+    {
+         
+                projectilePrefab.gameObject.SetActive(true);
+          
+         
+    }
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0) && canshoot)
+        if (Player.instance.CanAttack)
         {
-            
-            currentBullet1= Instantiate(bulletPrefab, shootPos1.position,shootPos1.rotation).transform;
-            currentBullet2= Instantiate(bulletPrefab, shootPos2.position, shootPos2.rotation).transform;
-            bulletPool.Add(currentBullet1.GetComponent<bullet>());
-            bulletPool.Add(currentBullet2.GetComponent<bullet>());
-            haircrossDirection = haircross.forward;
-            //canshoot = false;
+            if (Input.GetMouseButtonDown(0) && Player.instance.CanAttack)
+            {
 
+                shootBullets();
+               
+                //canshoot = false;
+
+            }
+            if (Input.GetMouseButtonDown(1) && Player.instance.canShootProjectiles)
+            {
+                Player.instance.canShootProjectiles = false;
+                shootProjectiles();
+            }
         }
         
     }

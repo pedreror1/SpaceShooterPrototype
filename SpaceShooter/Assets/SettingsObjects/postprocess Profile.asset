@@ -1,5 +1,39 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4138483803541867901
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b77c5407dc277943b591ade9e6b18c5, type: 3}
+  m_Name: LensDistortion
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 34.6
+  intensityX:
+    overrideState: 0
+    value: 1
+  intensityY:
+    overrideState: 0
+    value: 1
+  centerX:
+    overrideState: 0
+    value: 0
+  centerY:
+    overrideState: 0
+    value: 0
+  scale:
+    overrideState: 0
+    value: 1
 --- !u!114 &-635615944586138646
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -18,10 +52,10 @@ MonoBehaviour:
     value: 1
   shutterAngle:
     overrideState: 1
-    value: 360
+    value: 89
   sampleCount:
     overrideState: 1
-    value: 4
+    value: 6
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37,6 +71,7 @@ MonoBehaviour:
   settings:
   - {fileID: 8064430052860669757}
   - {fileID: -635615944586138646}
+  - {fileID: -4138483803541867901}
 --- !u!114 &8064430052860669757
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -55,13 +90,13 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 0
+    value: 12.18
   threshold:
     overrideState: 1
     value: 1
   softKnee:
     overrideState: 1
-    value: 0.5
+    value: 1
   clamp:
     overrideState: 1
     value: 65472

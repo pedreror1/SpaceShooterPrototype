@@ -33,7 +33,7 @@ public class Movement : MonoBehaviour
     Rigidbody rb;
     void Start()
     {
-        Cursor.visible = false;
+        
         rb = GetComponent<Rigidbody>();
     }
     float getValidValue(Vector2 range, float currentvalue)
@@ -71,26 +71,28 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Vector3 velocity = SpaceShip.forward * Input.GetAxis("Vertical") * movementSpeed + SpaceShip.right * Input.GetAxis("Horizontal") * movementSpeed; ;
-       rb.velocity= velocity;
-        mousePosition.x =Mathf.Lerp(mousePosition.x,getValidValue(cameraHorizontalRange,Input.mousePosition.x),Time.deltaTime*mouseSpeed);
-        mousePosition.y = Mathf.Lerp(mousePosition.y, getValidValue(cameraVerticalRange, Input.mousePosition.y), Time.deltaTime * mouseSpeed);
-        mousePosition.z = hairCrossPosZ;
-        calculateCameraOffset();
-        print(rb.velocity.magnitude);
-        if (rb.velocity.magnitude > 0)
+        if (Player.instance.CanMove)
         {
-            var mouseMovement = new Vector2(Input.GetAxis("Mouse X") + cameraOffset.x, Input.GetAxis("Mouse Y") + cameraOffset.y * (invertY ? 1 : -1));
+            Vector3 velocity = SpaceShip.forward * Input.GetAxis("Vertical") * movementSpeed + SpaceShip.right * Input.GetAxis("Horizontal") * movementSpeed; ;
+            rb.velocity = velocity;
+            mousePosition.x = Mathf.Lerp(mousePosition.x, getValidValue(cameraHorizontalRange, Input.mousePosition.x), Time.deltaTime * mouseSpeed);
+            mousePosition.y = Mathf.Lerp(mousePosition.y, getValidValue(cameraVerticalRange, Input.mousePosition.y), Time.deltaTime * mouseSpeed);
+            mousePosition.z = hairCrossPosZ;
+            calculateCameraOffset();
+            print(rb.velocity.magnitude);
+            if (rb.velocity.magnitude > 0)
+            {
+                var mouseMovement = new Vector2(Input.GetAxis("Mouse X") + cameraOffset.x, Input.GetAxis("Mouse Y") + cameraOffset.y * (invertY ? 1 : -1));
 
-            float currentpitch = pitch + mouseMovement.y;
-            float currentyaw = yaw + mouseMovement.x;
-            yaw = Mathf.Lerp(yaw, currentyaw, Time.deltaTime * rotationSpeed);
-            pitch = Mathf.Lerp(pitch, currentpitch, Time.deltaTime * rotationSpeed);
-            CameraTransform.eulerAngles = new Vector3(pitch, yaw, 0f);
+                float currentpitch = pitch + mouseMovement.y;
+                float currentyaw = yaw + mouseMovement.x;
+                yaw = Mathf.Lerp(yaw, currentyaw, Time.deltaTime * rotationSpeed);
+                pitch = Mathf.Lerp(pitch, currentpitch, Time.deltaTime * rotationSpeed);
+                CameraTransform.eulerAngles = new Vector3(pitch, yaw, 0f);
+            }
+            hairCross.position = Camera.main.ScreenToWorldPoint(mousePosition);
+            SpaceShip.LookAt(hairCross);
         }
-        hairCross.position = Camera.main.ScreenToWorldPoint(mousePosition);
-        SpaceShip.LookAt(hairCross);
-
 
     }
 }

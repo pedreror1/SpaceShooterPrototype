@@ -21,6 +21,6 @@ public class Projectile : MonoBehaviour
         {
             transform.LookAt(objective);
         }
-        transform.position += transform.forward;
+        transform.position += transform.forward*speed;
     }
 }
