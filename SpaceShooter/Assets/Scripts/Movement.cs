@@ -44,11 +44,11 @@ public class Movement : MonoBehaviour
     {
         if (Input.mousePosition.x < cameraHorizontalRange.x)
         {
-            cameraOffset.x = -1f;
+            cameraOffset.x = -10f;
         }
         else if (Input.mousePosition.x > cameraHorizontalRange.y)
         {
-            cameraOffset.x = 1f;
+            cameraOffset.x = 10f;
         }
         else
         {
@@ -57,11 +57,11 @@ public class Movement : MonoBehaviour
 
         if (Input.mousePosition.y < cameraVerticalRange.x)
         {
-            cameraOffset.y = -1f;
+            cameraOffset.y = -10f;
         }
         else if (Input.mousePosition.y > cameraVerticalRange.y)
         {
-            cameraOffset.y = 1f;
+            cameraOffset.y = 10f;
         }
         else
         {
@@ -79,7 +79,7 @@ public class Movement : MonoBehaviour
             mousePosition.y = Mathf.Lerp(mousePosition.y, getValidValue(cameraVerticalRange, Input.mousePosition.y), Time.deltaTime * mouseSpeed);
             mousePosition.z = hairCrossPosZ;
             calculateCameraOffset();
-            print(rb.velocity.magnitude);
+             
             if (rb.velocity.magnitude > 0)
             {
                 var mouseMovement = new Vector2(Input.GetAxis("Mouse X") + cameraOffset.x, Input.GetAxis("Mouse Y") + cameraOffset.y * (invertY ? 1 : -1));
@@ -89,6 +89,8 @@ public class Movement : MonoBehaviour
                 yaw = Mathf.Lerp(yaw, currentyaw, Time.deltaTime * rotationSpeed);
                 pitch = Mathf.Lerp(pitch, currentpitch, Time.deltaTime * rotationSpeed);
                 CameraTransform.eulerAngles = new Vector3(pitch, yaw, 0f);
+             //   rb.AddTorque(new Vector3(currentpitch, yaw, 0f));
+                 
             }
             hairCross.position = Camera.main.ScreenToWorldPoint(mousePosition);
             SpaceShip.LookAt(hairCross);

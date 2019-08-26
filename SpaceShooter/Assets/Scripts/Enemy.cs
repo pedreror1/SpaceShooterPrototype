@@ -4,32 +4,88 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Range(0f, 100f)]
     [SerializeField]
-    [Range(0f, 10f)]
-    public float speed = 1f;
-    [SerializeField] Transform player;
+    float speed = 1f;
+    [Range(0f, 10000f)]
     [SerializeField]
-    [Range(0f, 10f)]
-    public float fov = 1f;
-    // Start is called before the first frame update
-    void Start()
+    float FOVRadius = 1f;
+    [Range(0f, 100f)]
+    [SerializeField]
+    float minDistToShoot = 1f;
+    float dist;
+    [SerializeField] SphereCollider radiusCollider;
+    Transform Target;
+    Rigidbody rb;
+    WaitForSeconds ShoodDelay = new WaitForSeconds(4.5f);
+    bool inShootingRange = false;
+
+    [SerializeField] Transform shootPos1;
+     bool canshoot = true;
+    Transform currentBullet1;
+    void Awake()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
-    private void checkCollision()
-    {
-        Ray ray = new Ray(transform.position, transform.forward);
-        RaycastHit hito;
-       if(Physics.Raycast(ray,out hito,fov))
-       {
-            print(hito.transform.name);
-       }
-    }
-    // Update is called once per frame
     void Update()
     {
-        transform.LookAt(player);
-        transform.position += transform.forward * speed;
-        checkCollision();
+        if (!Target)
+        {
+            if (radiusCollider.radius < FOVRadius)
+                radiusCollider.radius += Time.deltaTime*10;
+            rb.velocity = transform.forward * speed;
+            rb.AddTorque(0, Time.deltaTime, 0);
+        }
+        else
+        {
+            dist = Vector3.Distance(transform.position, Target.position);
+
+            transform.LookAt(Target);
+            if (dist > minDistToShoot)
+            {
+                rb.velocity = transform.forward * speed;
+                inShootingRange = false;
+            }
+            else
+            {
+                rb.velocity = Vector3.zero;
+                inShootingRange = true;
+                if(canshoot)
+                {
+                    canshoot = false;
+                    StartCoroutine(Shoot());
+                }
+                    
+                 
+               
+            }
+
+        }
+    }
+    IEnumerator Shoot()
+    {
+        while (inShootingRange)
+        {
+            yield return ShoodDelay;
+           // print("sadf");
+            currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+            currentBullet1.position = shootPos1.position;
+            currentBullet1.rotation = shootPos1.rotation;
+            if (dist > minDistToShoot)
+            {
+                inShootingRange = false;
+            }
+
+
+        }
+        canshoot = true;
+
+    }
+    private void OnTriggerEnter(Collider col)
+    {    
+        if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
+        {
+            Target = col.transform;
+        }
     }
 }

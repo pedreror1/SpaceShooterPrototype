@@ -9,6 +9,7 @@ public class bullet : MonoBehaviour
     [SerializeField]
     [Range(0f, 10f)]
     public float fov = 1f;
+    WaitForSeconds lifeSpan = new WaitForSeconds(3f);
     private void checkCollision()
     {
         Ray ray = new Ray(transform.position, transform.forward);
@@ -20,16 +21,19 @@ public class bullet : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        print(other.transform.name);
+       // print(other.transform.name);
     }
     void FixedUpdate()
     {
         transform.position += transform.forward * speed;
         transform.Rotate(0f, 0f, 10f);
         checkCollision();
-        if(Vector3.Distance(Player.instance.transform.position,transform.position)>1250f)
-        {
-            PoolSystem.Instance.AddtoPool(gameObject);
-        }
+        StartCoroutine(destroy());
+    }
+    IEnumerator destroy()
+    {
+        yield return lifeSpan;
+        PoolSystem.Instance.AddtoPool(gameObject);
+
     }
 }

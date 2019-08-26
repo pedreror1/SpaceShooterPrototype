@@ -6,8 +6,7 @@ public class PlayerWeapons : MonoBehaviour
 {
     [SerializeField]
     Transform shootPos1,shootPos2,haircross,spaceShip;
-    List<bullet> bulletPool = new List<bullet>();
-    [SerializeField] Projectile projectilePrefab;
+     [SerializeField] Projectile projectilePrefab;
     bool canshoot = true;
     Transform currentBullet1, currentBullet2;
     Vector3 haircrossDirection;
@@ -24,8 +23,7 @@ public class PlayerWeapons : MonoBehaviour
         currentBullet2 = PoolSystem.Instance.getFromPool().transform;
         currentBullet2.position = shootPos2.position;
         currentBullet2.rotation = shootPos2.rotation;
-        bulletPool.Add(currentBullet1.GetComponent<bullet>());
-        bulletPool.Add(currentBullet2.GetComponent<bullet>());
+        
         haircrossDirection = haircross.forward;
     }
     void shootProjectiles()

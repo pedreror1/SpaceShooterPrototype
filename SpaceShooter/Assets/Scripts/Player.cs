@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        print(other.transform.name);
+        //print(other.transform.name);
     }
     // Update is called once per frame
     void Update()

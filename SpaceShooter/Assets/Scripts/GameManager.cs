@@ -6,40 +6,51 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     GameObject GameUI, MainMenuUI;
-    int Score = 9999;
+    public int Score = 9999;
     int Coins = 0;
     int enemiesKilled = 13;
-    int TimeRemaining= 60;
+    int TimeRemaining = 60;
     int lifes = 3;
     public static GameManager instance;
     [SerializeField] Text coinText, timeText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
-   public enum GameState
+    public struct highScoreData
     {
-        MainMenu=0,
-        Game=1,
-        Shop=2,
-        HighScores=3
+        public string name;
+        public int score;
+        public highScoreData(string n, int s)
+        {
+            name = n;
+            score = s;
+        }
+    }
+    public List<highScoreData> HSData = new List<highScoreData>();
+    public enum GameState
+    {
+        MainMenu = 0,
+        Game = 1,
+        Shop = 2,
+        HighScores = 3
     }
     public GameState currentState = GameState.MainMenu;
-    public void AddCoin(int numCoins=1)
+    public void AddCoin(int numCoins = 1)
     {
-        Coins+= numCoins;
+        Coins += numCoins;
         coinText.text = Coins.ToString().PadLeft(2, '0');
     }
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
-     }
+    }
     IEnumerator GameTime()
     {
-        while (TimeRemaining>0)
+        while (TimeRemaining > 0)
         {
             yield return timerCycleLapse;
             TimeRemaining--;
             timeText.text = TimeRemaining.ToString().PadLeft(2, '0');
-           
+
         }
         Player.instance.CanMove = false;
         Player.instance.CanAttack = false;
@@ -47,7 +58,7 @@ public class GameManager : MonoBehaviour
     public void changeState(int newState)
     {
         currentState = (GameState)newState;
-        switch(currentState)
+        switch (currentState)
         {
             case GameState.Game:
                 StartCoroutine(GameTime());
@@ -62,6 +73,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
