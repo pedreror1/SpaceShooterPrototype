@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject GameUI, MainMenuUI;
+    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI;
     public int Score = 9999;
     int Coins = 0;
     int enemiesKilled = 13;
@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour
         MainMenu = 0,
         Game = 1,
         Shop = 2,
-        HighScores = 3
+        HighScorescreen = 3,
+        HighScoreSave=4
     }
     public GameState currentState = GameState.MainMenu;
     public void AddCoin(int numCoins = 1)
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator GameTime()
     {
+        TimeRemaining = 60;
         while (TimeRemaining > 0)
         {
             yield return timerCycleLapse;
@@ -54,6 +56,7 @@ public class GameManager : MonoBehaviour
         }
         Player.instance.CanMove = false;
         Player.instance.CanAttack = false;
+        changeState(2);
     }
     public void changeState(int newState)
     {
@@ -61,12 +64,52 @@ public class GameManager : MonoBehaviour
         switch (currentState)
         {
             case GameState.Game:
+                ShopUI.SetActive(false);
+
                 StartCoroutine(GameTime());
                 MainMenuUI.SetActive(false);
                 GameUI.SetActive(true);
                 Player.instance.CanMove = true;
                 Player.instance.CanAttack = true;
                 Cursor.visible = false;
+                break;
+            case GameState.HighScoreSave:
+                ShopUI.SetActive(false);
+
+                GameUI.SetActive(false);
+                Player.instance.CanMove = false;
+                Player.instance.CanAttack = false;
+                Cursor.visible = true;
+                HighScoreSaveUI.SetActive(true);
+                break;
+            case GameState.HighScorescreen:
+                ShopUI.SetActive(false);
+                GameUI.SetActive(false);
+                MainMenuUI.SetActive(false);
+
+                HighScoreSaveUI.SetActive(false);
+                HighscoreMainUI.SetActive(true);
+                highscore.instance.LoadData();
+                break;
+            case GameState.MainMenu:
+                ShopUI.SetActive(false);
+
+                HighScoreSaveUI.SetActive(false);
+                HighscoreMainUI.SetActive(false);
+                MainMenuUI.SetActive(true);
+                GameUI.SetActive(false);
+                Player.instance.CanMove = false;
+                Player.instance.CanAttack = false;
+                Cursor.visible = true;
+
+                break;
+            case GameState.Shop:
+                ShopUI.SetActive(true);
+                
+                GameUI.SetActive(false);
+                Player.instance.CanMove = false;
+                Player.instance.CanAttack = false;
+                Cursor.visible = true;
                 break;
         }
     }

@@ -44,27 +44,37 @@ public class Movement : MonoBehaviour
     {
         if (Input.mousePosition.x < cameraHorizontalRange.x)
         {
+            
+
             cameraOffset.x = -10f;
         }
         else if (Input.mousePosition.x > cameraHorizontalRange.y)
         {
+             
             cameraOffset.x = 10f;
         }
         else
         {
+             
             cameraOffset.x = 0f;
         }
 
         if (Input.mousePosition.y < cameraVerticalRange.x)
         {
+             
+
             cameraOffset.y = -10f;
         }
         else if (Input.mousePosition.y > cameraVerticalRange.y)
         {
+            
+
             cameraOffset.y = 10f;
         }
         else
         {
+             
+
             cameraOffset.y = 0f;
         }
     }

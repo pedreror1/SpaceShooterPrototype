@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class highscore : MonoBehaviour
 {
+    public static highscore instance;
     [SerializeField] Text nameT;
     [SerializeField] Text HSList;
 
@@ -14,14 +15,15 @@ public class highscore : MonoBehaviour
     WaitForSeconds blinkDelay = new WaitForSeconds(0.25f);
     void Start()
     {
+        instance = this;
         StartCoroutine(blink());
     }
     IEnumerator blink()
     {
-        while (currentLetter < 2)
+        while (currentLetter <= 2)
         {
             yield return blinkDelay;
-            if (currentLetter < 2)
+            if (currentLetter <= 2)
             {
                 if (nameT.text[currentLetter] != name[currentLetter])
                 {
@@ -67,15 +69,16 @@ public class highscore : MonoBehaviour
     {
         if (currentLetter < 3)
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
                 nextLetter();
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             {
                 previousLetter();
             }
-            if (Input.GetKey(KeyCode.W))
+            
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
                 timeTochange += Time.deltaTime;
                 if (timeTochange > 1f)
@@ -84,16 +87,7 @@ public class highscore : MonoBehaviour
                     timeTochange = 0f;
                 }
             }
-            if (Input.GetKey(KeyCode.W))
-            {
-                timeTochange += Time.deltaTime;
-                if (timeTochange > 1f)
-                {
-                    nextLetter();
-                    timeTochange = 0f;
-                }
-            }
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
                 timeTochange += Time.deltaTime;
                 if (timeTochange > 1f)
@@ -103,7 +97,7 @@ public class highscore : MonoBehaviour
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.KeypadEnter)|| Input.GetKeyDown(KeyCode.RightArrow))
         {
             if (currentLetter < 2)
             {
@@ -112,9 +106,11 @@ public class highscore : MonoBehaviour
             else
             {
                 saveData();
+                currentLetter = 5;
+                GameManager.instance.changeState((int)GameManager.GameState.HighScorescreen);
             }
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             if (currentLetter > 0)
             {
@@ -157,9 +153,11 @@ public class highscore : MonoBehaviour
         }
 
         GameManager.instance.changeState(4);
+        LoadData();
     }
-    void LoadData()
+    public void LoadData()
     {
+        HSList.text = "";
         GameManager.instance.HSData.Clear();
         string[] data;
         for (int i = 0; i < PlayerPrefs.GetInt("HSCount"); i++)
@@ -168,7 +166,7 @@ public class highscore : MonoBehaviour
             if (data.Length == 2)
             {
                 GameManager.instance.HSData.Add(new GameManager.highScoreData(  data[0], int.Parse( data[1])));
-                HSList.text += "/n" + data[0] + "               " + data[1];
+                HSList.text += "\n" + data[0] + "               " + data[1];
             }
 
         }
