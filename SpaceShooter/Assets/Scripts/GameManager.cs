@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI,EnemiesManager;
+    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI,EnemiesManager,pauseUI;
     public CameraShake cameraShakeController;
     public int Score = 9999;
     int Coins = 0;
@@ -35,8 +35,11 @@ public class GameManager : MonoBehaviour
         Game = 1,
         Shop = 2,
         HighScorescreen = 3,
-        HighScoreSave=4
+        HighScoreSave=4,
+        Pause =5,
+
     }
+    bool isPaused = false;
     public GameState currentState = GameState.MainMenu;
     public void AddCoin(int numCoins = 1)
     {
@@ -123,6 +126,7 @@ public class GameManager : MonoBehaviour
                 highscore.instance.LoadData();
                 break;
             case GameState.MainMenu:
+                pauseUI.SetActive(false);
                 ShopUI.SetActive(false);
 
                 HighScoreSaveUI.SetActive(false);
@@ -142,11 +146,36 @@ public class GameManager : MonoBehaviour
                 Player.instance.CanAttack = false;
                 Cursor.visible = true;
                 break;
+            case GameState.Pause:
+                isPaused = !isPaused;
+                if (isPaused)
+                {
+                    GameUI.SetActive(false);
+                    pauseUI.SetActive(true);
+                    Player.instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    Player.instance.CanMove = false;
+                    Player.instance.CanAttack = false;
+                    Cursor.visible = true;
+                    EnemiesManager.SetActive(false);
+                }
+                else
+                {
+                    GameUI.SetActive(true);
+                    pauseUI.SetActive(false);
+                    Player.instance.CanMove = true;
+                    Player.instance.CanAttack = true;
+                    Cursor.visible = false;
+                    EnemiesManager.SetActive(true);
+                }
+                break;
         }
     }
     // Update is called once per frame
     void Update()
     {
-
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            changeState(5);
+        }
     }
 }
