@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     int TimeRemaining = 60;
     int startTimer = 3;
     int lifes = 3;
+
     public static GameManager instance;
     [SerializeField] Text coinText, timeText, startTimerText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
