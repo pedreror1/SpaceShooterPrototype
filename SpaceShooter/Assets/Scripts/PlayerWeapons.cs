@@ -17,6 +17,7 @@ public class PlayerWeapons : MonoBehaviour
     }
     void shootBullets()
     {
+        GameManager.instance.cameraShakeController.ShakeCamera(2.5f,0.53f);
         currentBullet1 = PoolSystem.Instance.getFromPool().transform;
         currentBullet1.position = shootPos1.position;
         currentBullet1.rotation = shootPos1.rotation;

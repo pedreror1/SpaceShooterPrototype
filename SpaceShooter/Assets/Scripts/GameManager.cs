@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI,EnemiesManager;
+    public CameraShake cameraShakeController;
     public int Score = 9999;
     int Coins = 0;
     int enemiesKilled = 13;
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         instance = this;
+        cameraShakeController = GetComponent<CameraShake>();
     }
     IEnumerator GameTime()
     {
