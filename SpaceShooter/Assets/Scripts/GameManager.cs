@@ -5,15 +5,18 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI;
+    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI,EnemiesManager;
     public int Score = 9999;
     int Coins = 0;
     int enemiesKilled = 13;
     int TimeRemaining = 60;
+    int startTimer = 3;
     int lifes = 3;
     public static GameManager instance;
-    [SerializeField] Text coinText, timeText;
+    [SerializeField] Text coinText, timeText, startTimerText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
+    int level = 1;
+    
     public struct highScoreData
     {
         public string name;
@@ -47,6 +50,31 @@ public class GameManager : MonoBehaviour
     IEnumerator GameTime()
     {
         TimeRemaining = 60;
+        startTimerText.color = Color.white;
+        startTimer = 3;
+        startTimerText.text = "3";
+        startTimerText.GetComponent<Animator>().enabled = false;
+        while (startTimer>=0)
+        {
+            startTimer--;
+
+            yield return timerCycleLapse;
+
+            if (startTimer > 0)
+            {
+                startTimerText.text = startTimer.ToString();
+            }
+            else
+            {
+                startTimerText.text = "START!";
+            }
+
+        }
+        Player.instance.CanMove = true;
+        Player.instance.CanAttack = true;
+        EnemiesManager.SetActive(true);
+        startTimerText.GetComponent<Animator>().enabled = true;
+
         while (TimeRemaining > 0)
         {
             yield return timerCycleLapse;
@@ -56,6 +84,8 @@ public class GameManager : MonoBehaviour
         }
         Player.instance.CanMove = false;
         Player.instance.CanAttack = false;
+        EnemiesManager.SetActive(false);
+        level++;
         changeState(2);
     }
     public void changeState(int newState)
@@ -69,8 +99,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(GameTime());
                 MainMenuUI.SetActive(false);
                 GameUI.SetActive(true);
-                Player.instance.CanMove = true;
-                Player.instance.CanAttack = true;
+              
                 Cursor.visible = false;
                 break;
             case GameState.HighScoreSave:
