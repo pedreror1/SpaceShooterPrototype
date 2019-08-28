@@ -17,6 +17,14 @@ public class bullet : MonoBehaviour
         if (Physics.Raycast(ray, out hito, fov))
         {
             print(hito.transform.name);
+            if(hito.transform.tag == "Player" )
+            {
+                hito.transform.GetComponent<Player>().getDamage(10);
+            }
+            else if( hito.transform.tag == "Enemy")
+            {
+                hito.transform.GetComponent<Player>().getDamage(10);
+            }
         }
     }
     private void OnTriggerEnter(Collider other)

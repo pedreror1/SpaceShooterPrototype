@@ -1,11 +1,19 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    GameObject GameUI, MainMenuUI,HighscoreMainUI,HighScoreSaveUI, ShopUI,EnemiesManager,pauseUI;
+
+    [SerializeField] GameObject GameUI;
+    [SerializeField] GameObject MainMenuUI;
+    [SerializeField] GameObject HighscoreMainUI;
+    [SerializeField] GameObject HighScoreSaveUI;
+    [SerializeField] GameObject ShopUI;
+    [SerializeField] GameObject EnemiesManager;
+    [SerializeField] GameObject pauseUI;
+    public GameObject ExplosionParticle;
     public CameraShake cameraShakeController;
     public int Score = 9999;
     int Coins = 0;
@@ -18,7 +26,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] Text coinText, timeText, startTimerText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
     int level = 1;
-    
+    public AudioSource inGameMusicSource;
+    public AudioSource UIMusicSource;
+    public AudioSource EffectsSource;
+    [SerializeField] AudioClip GameMusic;
+    [SerializeField] AudioClip UIMusic;
+    [SerializeField] AudioClip clickFX;
+    [SerializeField] AudioClip countDownFX;
+    [SerializeField] AudioClip startFX;
+    [SerializeField] AudioClip welcomeFX;
+    [SerializeField] AudioClip thanksFX;
+    [SerializeField] AudioClip nextLevelFX;
+    [SerializeField] AudioClip GameOverFX;
     public struct highScoreData
     {
         public string name;
@@ -36,8 +55,8 @@ public class GameManager : MonoBehaviour
         Game = 1,
         Shop = 2,
         HighScorescreen = 3,
-        HighScoreSave=4,
-        Pause =5,
+        HighScoreSave = 4,
+        Pause = 5,
 
     }
     bool isPaused = false;
@@ -50,6 +69,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playMusic();
         instance = this;
         cameraShakeController = GetComponent<CameraShake>();
     }
@@ -60,7 +80,7 @@ public class GameManager : MonoBehaviour
         startTimer = 3;
         startTimerText.text = "3";
         startTimerText.GetComponent<Animator>().enabled = false;
-        while (startTimer>=0)
+        while (startTimer >= 0)
         {
             startTimer--;
 
@@ -94,21 +114,42 @@ public class GameManager : MonoBehaviour
         level++;
         changeState(2);
     }
+    public void playMusic(bool isGameMusic = false)
+    {
+        if (isGameMusic)
+        {
+
+            UIMusicSource.Pause();
+            inGameMusicSource.Play();
+        }
+        else
+        {
+            UIMusicSource.UnPause();
+            inGameMusicSource.Pause();
+        }
+    }
+    public void playSoundFX(AudioClip clip)
+    {
+        EffectsSource.PlayOneShot(clip);
+    }
     public void changeState(int newState)
     {
         currentState = (GameState)newState;
         switch (currentState)
         {
             case GameState.Game:
+                playMusic(true);
+                EnemiesManager.SetActive(true);
                 ShopUI.SetActive(false);
 
                 StartCoroutine(GameTime());
                 MainMenuUI.SetActive(false);
                 GameUI.SetActive(true);
-              
+
                 Cursor.visible = false;
                 break;
             case GameState.HighScoreSave:
+                playMusic();
                 ShopUI.SetActive(false);
 
                 GameUI.SetActive(false);
@@ -116,8 +157,10 @@ public class GameManager : MonoBehaviour
                 Player.instance.CanAttack = false;
                 Cursor.visible = true;
                 HighScoreSaveUI.SetActive(true);
+                EnemiesManager.SetActive(false);
                 break;
             case GameState.HighScorescreen:
+                playMusic();
                 ShopUI.SetActive(false);
                 GameUI.SetActive(false);
                 MainMenuUI.SetActive(false);
@@ -127,6 +170,7 @@ public class GameManager : MonoBehaviour
                 highscore.instance.LoadData();
                 break;
             case GameState.MainMenu:
+                playMusic();
                 pauseUI.SetActive(false);
                 ShopUI.SetActive(false);
 
@@ -140,17 +184,22 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.Shop:
+                playMusic();
                 ShopUI.SetActive(true);
-                
+
                 GameUI.SetActive(false);
                 Player.instance.CanMove = false;
                 Player.instance.CanAttack = false;
                 Cursor.visible = true;
+                EnemiesManager.SetActive(false);
                 break;
             case GameState.Pause:
+
                 isPaused = !isPaused;
                 if (isPaused)
                 {
+                    playMusic();
+
                     GameUI.SetActive(false);
                     pauseUI.SetActive(true);
                     Player.instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -161,6 +210,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    playMusic();
                     GameUI.SetActive(true);
                     pauseUI.SetActive(false);
                     Player.instance.CanMove = true;
@@ -174,7 +224,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             changeState(5);
         }

@@ -22,21 +22,41 @@ public class Player : MonoBehaviour
     public bool CanMove=false;
     public bool CanAttack=false;
     float timewithoutDamagae = 0f;
+    public void getDamage(int damage)
+    {
+        timewithoutDamagae = 0f;
+        if (currentShield <= 0)
+        {
+            Health -= damage;
+            if (Health <= 0)
+            {
+                Instantiate(GameManager.instance.ExplosionParticle, transform.position, Quaternion.identity);
+            }
+        }
+        else
+        {
+            currentShield -= damage;
+        }
+        UpdateUI();
+    }
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+    void UpdateUI()
+    {
+        healthBar.fillAmount = Health / 100f;
+        shieldBar.fillAmount = currentShield / 100f;
+    }
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
         Health = 100;
         currentShield = MaxShield;
-        healthBar.fillAmount = Health / 100f;
-        shieldBar.fillAmount = currentShield / 100f;
+        
     }
-    void getDamaged()
-    {
-        timewithoutDamagae = 0f;
-        healthBar.fillAmount = Health / 100f;
-        shieldBar.fillAmount = currentShield / 100f;
-    }
+  
     private void OnTriggerEnter(Collider other)
     {
         //print(other.transform.name);

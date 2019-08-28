@@ -17,75 +17,100 @@ public class Enemy : MonoBehaviour
     [SerializeField] SphereCollider radiusCollider;
     Transform Target;
     Rigidbody rb;
-    WaitForSeconds ShoodDelay = new WaitForSeconds(4.5f);
-    bool inShootingRange = false;
+    WaitForSeconds ShoodDelay = new WaitForSeconds(1.0f);
+    int Health = 100;
 
+
+    enum state
+    {
+        flying,
+        chasing
+    }
+    state currentState = state.flying;
     [SerializeField] Transform shootPos1;
-     bool canshoot = true;
+    bool canshoot = true;
     Transform currentBullet1;
+    [SerializeField]  Transform WaypointManager;
+    AudioSource audioController;
     void Awake()
     {
+        audioController = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
+        radiusCollider.radius = FOVRadius;
+        getNewTarget();
+
+    }
+    public void getDamage(int damage)
+    {
+        Health -= damage;
+        if (Health <= 0)
+        {
+            Instantiate(GameManager.instance.ExplosionParticle, transform.position, Quaternion.identity);
+        }
+    }
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+    void getNewTarget()
+    {
+        Target = WaypointManager.GetChild(Random.Range(0, WaypointManager.childCount - 1));
     }
     void Update()
     {
-        if (!Target)
+
+        transform.LookAt(Target);
+        rb.velocity = transform.forward * speed;
+        dist = Vector3.Distance(transform.position, Target.position);
+        if (currentState == state.flying)
         {
-            if (radiusCollider.radius < FOVRadius)
-                radiusCollider.radius += Time.deltaTime*10;
-            rb.velocity = transform.forward * speed;
-            rb.AddTorque(0, Time.deltaTime, 0);
+            if (dist < 30f)
+            {
+                getNewTarget();
+            }
+
         }
         else
         {
-            dist = Vector3.Distance(transform.position, Target.position);
-
-            transform.LookAt(Target);
             if (dist > minDistToShoot)
             {
                 rb.velocity = transform.forward * speed;
-                inShootingRange = false;
             }
             else
             {
-                rb.velocity = Vector3.zero;
-                inShootingRange = true;
-                if(canshoot)
+                if (canshoot)
                 {
+                    currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+                    currentBullet1.position = shootPos1.position;
+                    currentBullet1.rotation = shootPos1.rotation;
                     canshoot = false;
-                    StartCoroutine(Shoot());
+                    StartCoroutine(shootCoolOff());
+                    currentState = state.flying;
+                    getNewTarget();
                 }
-                    
-                 
-               
             }
 
+
+
         }
+
     }
-    IEnumerator Shoot()
+
+
+IEnumerator shootCoolOff()
+{
+    yield return ShoodDelay;
+    canshoot = true;
+    radiusCollider.radius = FOVRadius;
+}
+private void OnTriggerEnter(Collider col)
+{
+    if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
     {
-        while (inShootingRange)
-        {
-            yield return ShoodDelay;
-           // print("sadf");
-            currentBullet1 = PoolSystem.Instance.getFromPool().transform;
-            currentBullet1.position = shootPos1.position;
-            currentBullet1.rotation = shootPos1.rotation;
-            if (dist > minDistToShoot)
-            {
-                inShootingRange = false;
-            }
-
-
-        }
-        canshoot = true;
+        Target = col.transform;
+        currentState = state.chasing;
+        radiusCollider.radius = 0f;
 
     }
-    private void OnTriggerEnter(Collider col)
-    {    
-        if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
-        {
-            Target = col.transform;
-        }
-    }
+}
 }
