@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,24 +10,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject HighscoreMainUI;
     [SerializeField] GameObject HighScoreSaveUI;
     [SerializeField] GameObject ShopUI;
-    [SerializeField] GameObject EnemiesManager;
+    //IMPLEMENT THIS!
+    [SerializeField] EnemyMG EnemiesManager;
     [SerializeField] GameObject pauseUI;
     public GameObject ExplosionParticle;
+    public GameObject CoinPrefab;
     public CameraShake cameraShakeController;
     public int Score = 9999;
     int Coins = 0;
-    int enemiesKilled = 13;
+    int enemiesKilled = 0;
     int TimeRemaining = 60;
     int startTimer = 3;
     int lifes = 3;
 
-    public static GameManager instance;
-    [SerializeField] Text coinText, timeText, startTimerText;
+    public static GameManager Instance;
+    [SerializeField] Text coinText,lifeText, timeText, startTimerText, enemiesKilledText,scoreText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
     int level = 1;
     public AudioSource inGameMusicSource;
     public AudioSource UIMusicSource;
     public AudioSource EffectsSource;
+    Vector3 OriginalPlayerPosition;
     [SerializeField] AudioClip GameMusic;
     [SerializeField] AudioClip UIMusic;
     [SerializeField] AudioClip clickFX;
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviour
         HighScorescreen = 3,
         HighScoreSave = 4,
         Pause = 5,
+        resspawning = 6
 
     }
     bool isPaused = false;
@@ -64,23 +67,44 @@ public class GameManager : MonoBehaviour
     public void AddCoin(int numCoins = 1)
     {
         Coins += numCoins;
+        UpdateUI();
+    }
+    public void UpdateUI()
+    {
         coinText.text = Coins.ToString().PadLeft(2, '0');
+        lifeText.text = lifes.ToString();
+        scoreText.text = "Score: "+Score.ToString().PadLeft(5, '0');
+        enemiesKilledText.text = enemiesKilled.ToString().PadLeft(3, '0');
+
+    }
+    public void AddScore(int points = 500)
+    {
+        Score += points;
+        enemiesKilled++;
+        UpdateUI();
+
     }
     // Start is called before the first frame update
     void Start()
     {
+        OriginalPlayerPosition = Player.Instance.transform.position;
         playMusic();
-        instance = this;
+        UpdateUI();
+        Instance = this;
         cameraShakeController = GetComponent<CameraShake>();
     }
-    IEnumerator GameTime()
+
+    IEnumerator GameTime(bool Respawning = false)
     {
-        TimeRemaining = 60;
+
         startTimerText.color = Color.white;
         startTimer = 3;
         startTimerText.text = "3";
+        playSoundFX(countDownFX);
         startTimerText.GetComponent<Animator>().enabled = false;
-        while (startTimer >= 0)
+        //IMPLEMENT THIS!
+
+        while (startTimer > 0)
         {
             startTimer--;
 
@@ -92,27 +116,35 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                playSoundFX(startFX);
                 startTimerText.text = "START!";
             }
 
         }
-        Player.instance.CanMove = true;
-        Player.instance.CanAttack = true;
-        EnemiesManager.SetActive(true);
+        EnemiesManager.Reset(Respawning);
+        Player.Instance.CanMove = true;
+        Player.Instance.CanAttack = true;
+
         startTimerText.GetComponent<Animator>().enabled = true;
-
-        while (TimeRemaining > 0)
+        if (!Respawning)
         {
-            yield return timerCycleLapse;
-            TimeRemaining--;
-            timeText.text = TimeRemaining.ToString().PadLeft(2, '0');
+            TimeRemaining = 60;
+            while (TimeRemaining > 0)
+            {
+                yield return timerCycleLapse;
+                TimeRemaining--;
+                timeText.text = TimeRemaining.ToString().PadLeft(2, '0');
 
+            }
+            if (lifes > 0)
+            {
+                Player.Instance.CanMove = false;
+                Player.Instance.CanAttack = false;
+                EnemiesManager.Pause();
+                level++;
+                changeState(2);
+            }
         }
-        Player.instance.CanMove = false;
-        Player.instance.CanAttack = false;
-        EnemiesManager.SetActive(false);
-        level++;
-        changeState(2);
     }
     public void playMusic(bool isGameMusic = false)
     {
@@ -139,7 +171,7 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Game:
                 playMusic(true);
-                EnemiesManager.SetActive(true);
+
                 ShopUI.SetActive(false);
 
                 StartCoroutine(GameTime());
@@ -149,17 +181,25 @@ public class GameManager : MonoBehaviour
                 Cursor.visible = false;
                 break;
             case GameState.HighScoreSave:
+                playSoundFX(GameOverFX);
+                Score += (Coins * 50);
+                Coins = 0;
+                Player.Instance.UpdateUI();
+                EnemiesManager.GameOver();
                 playMusic();
                 ShopUI.SetActive(false);
 
                 GameUI.SetActive(false);
-                Player.instance.CanMove = false;
-                Player.instance.CanAttack = false;
+                Player.Instance.CanMove = false;
+                Player.Instance.CanAttack = false;
                 Cursor.visible = true;
                 HighScoreSaveUI.SetActive(true);
-                EnemiesManager.SetActive(false);
+                EnemiesManager.gameObject.SetActive(false);
                 break;
             case GameState.HighScorescreen:
+                Score = 0;
+                Coins = 0;
+                Player.Instance.UpdateUI();
                 playMusic();
                 ShopUI.SetActive(false);
                 GameUI.SetActive(false);
@@ -178,20 +218,21 @@ public class GameManager : MonoBehaviour
                 HighscoreMainUI.SetActive(false);
                 MainMenuUI.SetActive(true);
                 GameUI.SetActive(false);
-                Player.instance.CanMove = false;
-                Player.instance.CanAttack = false;
+                Player.Instance.CanMove = false;
+                Player.Instance.CanAttack = false;
                 Cursor.visible = true;
 
                 break;
             case GameState.Shop:
+                playSoundFX(welcomeFX);
                 playMusic();
                 ShopUI.SetActive(true);
 
                 GameUI.SetActive(false);
-                Player.instance.CanMove = false;
-                Player.instance.CanAttack = false;
+                Player.Instance.CanMove = false;
+                Player.Instance.CanAttack = false;
                 Cursor.visible = true;
-                EnemiesManager.SetActive(false);
+                EnemiesManager.Pause();
                 break;
             case GameState.Pause:
 
@@ -202,21 +243,41 @@ public class GameManager : MonoBehaviour
 
                     GameUI.SetActive(false);
                     pauseUI.SetActive(true);
-                    Player.instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    Player.instance.CanMove = false;
-                    Player.instance.CanAttack = false;
+                    Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    Player.Instance.CanMove = false;
+                    Player.Instance.CanAttack = false;
                     Cursor.visible = true;
-                    EnemiesManager.SetActive(false);
+                    EnemiesManager.gameObject.SetActive(false);
                 }
                 else
                 {
                     playMusic();
                     GameUI.SetActive(true);
                     pauseUI.SetActive(false);
-                    Player.instance.CanMove = true;
-                    Player.instance.CanAttack = true;
+                    Player.Instance.CanMove = true;
+                    Player.Instance.CanAttack = true;
                     Cursor.visible = false;
-                    EnemiesManager.SetActive(true);
+                    EnemiesManager.gameObject.SetActive(true);
+                }
+                break;
+            case GameState.resspawning:
+                lifes--;
+                UpdateUI();
+
+
+                EnemiesManager.Pause();
+                if (lifes <= 0)
+                {
+                    changeState((int)GameState.HighScoreSave);
+                }
+                else
+                {
+                    //IMPLEMENT THIS!
+                    Player.Instance.Reset();
+
+                    StartCoroutine(GameTime(true));
+                    Player.Instance.CanMove = false;
+                    Player.Instance.CanAttack = false;
                 }
                 break;
         }

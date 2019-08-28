@@ -7,9 +7,10 @@ public class bullet : MonoBehaviour
     [SerializeField] [Range(0f, 100f)]
     public float speed = 1f;
     [SerializeField]
-    [Range(0f, 10f)]
+    [Range(0f, 100f)]
     public float fov = 1f;
     WaitForSeconds lifeSpan = new WaitForSeconds(3f);
+    public string bulletTag="Enemy";
     private void checkCollision()
     {
         Ray ray = new Ray(transform.position, transform.forward);
@@ -19,11 +20,11 @@ public class bullet : MonoBehaviour
             print(hito.transform.name);
             if(hito.transform.tag == "Player" )
             {
-                hito.transform.GetComponent<Player>().getDamage(10);
+                hito.transform.GetComponent<Player>().getDamage(35);
             }
             else if( hito.transform.tag == "Enemy")
             {
-                hito.transform.GetComponent<Player>().getDamage(10);
+                hito.transform.GetComponent<Enemy>().getDamage(35,bulletTag);
             }
         }
     }

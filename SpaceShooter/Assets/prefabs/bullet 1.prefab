@@ -107,7 +107,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 21
-  fov: 10
+  fov: 44.9
+  bulletTag: Enemy
 --- !u!82 &709539694518502927
 AudioSource:
   m_ObjectHideFlags: 0

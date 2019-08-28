@@ -107,7 +107,7 @@ public class highscore : MonoBehaviour
             {
                 saveData();
                 currentLetter = 5;
-                GameManager.instance.changeState((int)GameManager.GameState.HighScorescreen);
+                GameManager.Instance.changeState((int)GameManager.GameState.HighScorescreen);
             }
         }
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
@@ -124,48 +124,48 @@ public class highscore : MonoBehaviour
     void saveData()
     {
         LoadData();
-        if (GameManager.instance.HSData.Count == 0)
+        if (GameManager.Instance.HSData.Count == 0)
         {
-            GameManager.instance.HSData.Add(new GameManager.highScoreData(nameT.text, GameManager.instance.Score));
+            GameManager.Instance.HSData.Add(new GameManager.highScoreData(nameT.text, GameManager.Instance.Score));
 
         }
         else
         {
-            for (int i = 0; i < GameManager.instance.HSData.Count; i++)
+            for (int i = 0; i < GameManager.Instance.HSData.Count; i++)
             {
-                if (GameManager.instance.Score >= GameManager.instance.HSData[i].score)
+                if (GameManager.Instance.Score >= GameManager.Instance.HSData[i].score)
                 {
-                    GameManager.instance.HSData.Insert(i,new GameManager.highScoreData(nameT.text, GameManager.instance.Score));
+                    GameManager.Instance.HSData.Insert(i,new GameManager.highScoreData(nameT.text, GameManager.Instance.Score));
                     break;
                 }
-                else if (i == GameManager.instance.HSData.Count - 1)
+                else if (i == GameManager.Instance.HSData.Count - 1)
                 {
-                    GameManager.instance.HSData.Add(new GameManager.highScoreData(nameT.text, GameManager.instance.Score));
+                    GameManager.Instance.HSData.Add(new GameManager.highScoreData(nameT.text, GameManager.Instance.Score));
 
                 }
             }
         }
-        PlayerPrefs.SetInt("HSCount", GameManager.instance.HSData.Count);
-        for (int i = 0; i < GameManager.instance.HSData.Count; i++)
+        PlayerPrefs.SetInt("HSCount", GameManager.Instance.HSData.Count);
+        for (int i = 0; i < GameManager.Instance.HSData.Count; i++)
         {
-            PlayerPrefs.SetString("HS" + i.ToString(), GameManager.instance.HSData[i].name + "," + GameManager.instance.HSData[i].score);
+            PlayerPrefs.SetString("HS" + i.ToString(), GameManager.Instance.HSData[i].name + "," + GameManager.Instance.HSData[i].score);
 
         }
 
-        GameManager.instance.changeState(4);
+        GameManager.Instance.changeState(4);
         LoadData();
     }
     public void LoadData()
     {
         HSList.text = "";
-        GameManager.instance.HSData.Clear();
+        GameManager.Instance.HSData.Clear();
         string[] data;
         for (int i = 0; i < PlayerPrefs.GetInt("HSCount"); i++)
         {
             data = PlayerPrefs.GetString("HS" + i.ToString()).Split(',');
             if (data.Length == 2)
             {
-                GameManager.instance.HSData.Add(new GameManager.highScoreData(  data[0], int.Parse( data[1])));
+                GameManager.Instance.HSData.Add(new GameManager.highScoreData(  data[0], int.Parse( data[1])));
                 HSList.text += "\n" + data[0] + "               " + data[1];
             }
 

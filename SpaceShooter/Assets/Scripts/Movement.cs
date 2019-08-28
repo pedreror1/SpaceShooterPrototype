@@ -33,7 +33,10 @@ public class Movement : MonoBehaviour
     Rigidbody rb;
     void Start()
     {
-        
+        cameraHorizontalRange.x = Screen.width / 2f - Screen.width / 3f;
+        cameraHorizontalRange.y= Screen.width / 2f + Screen.width / 3f;
+        cameraVerticalRange.x = Screen.height / 2f - Screen.height / 3f;
+        cameraVerticalRange.y = Screen.height / 2f + Screen.height / 3f;
         rb = GetComponent<Rigidbody>();
     }
     float getValidValue(Vector2 range, float currentvalue)
@@ -81,7 +84,7 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Player.instance.CanMove)
+        if (Player.Instance.CanMove)
         {
             Vector3 velocity = SpaceShip.forward * Input.GetAxis("Vertical") * movementSpeed + SpaceShip.right * Input.GetAxis("Horizontal") * movementSpeed; ;
             rb.velocity = velocity;

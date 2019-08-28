@@ -17,14 +17,15 @@ public class PlayerWeapons : MonoBehaviour
     }
     void shootBullets()
     {
-        GameManager.instance.cameraShakeController.ShakeCamera(2.5f,0.53f);
+        GameManager.Instance.cameraShakeController.ShakeCamera(2.5f,0.53f);
         currentBullet1 = PoolSystem.Instance.getFromPool().transform;
         currentBullet1.position = shootPos1.position;
         currentBullet1.rotation = shootPos1.rotation;
         currentBullet2 = PoolSystem.Instance.getFromPool().transform;
         currentBullet2.position = shootPos2.position;
         currentBullet2.rotation = shootPos2.rotation;
-        
+        currentBullet1.GetComponent<bullet>().bulletTag = "Player";
+        //currentBullet2.GetComponent<bullet>().bulletTag = "Player";
         haircrossDirection = haircross.forward;
     }
     void shootProjectiles()
@@ -37,9 +38,9 @@ public class PlayerWeapons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player.instance.CanAttack)
+        if (Player.Instance.CanAttack)
         {
-            if (Input.GetMouseButtonDown(0) && Player.instance.CanAttack)
+            if (Input.GetMouseButtonDown(0) && Player.Instance.CanAttack)
             {
 
                 shootBullets();
@@ -47,9 +48,9 @@ public class PlayerWeapons : MonoBehaviour
                 //canshoot = false;
 
             }
-            if (Input.GetMouseButtonDown(1) && Player.instance.canShootProjectiles)
+            if (Input.GetMouseButtonDown(1) && Player.Instance.canShootProjectiles)
             {
-                Player.instance.canShootProjectiles = false;
+                Player.Instance.canShootProjectiles = false;
                 shootProjectiles();
             }
         }

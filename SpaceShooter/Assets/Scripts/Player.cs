@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
-    public static Player instance;
+    public static Player Instance;
     public bool canShootProjectiles = true;
 
     int Health;
@@ -22,28 +22,34 @@ public class Player : MonoBehaviour
     public bool CanMove=false;
     public bool CanAttack=false;
     float timewithoutDamagae = 0f;
+    [SerializeField] GameObject ShieldGO;
+   
     public void getDamage(int damage)
     {
         timewithoutDamagae = 0f;
         if (currentShield <= 0)
         {
+            ShieldGO.SetActive(false);
             Health -= damage;
             if (Health <= 0)
             {
-                Instantiate(GameManager.instance.ExplosionParticle, transform.position, Quaternion.identity);
+                Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
+                GameManager.Instance.changeState(6);
             }
         }
         else
         {
-            currentShield -= damage;
+           currentShield -= damage;
         }
         UpdateUI();
     }
-    void Die()
+    public void Reset()
     {
-        Destroy(gameObject);
+        Health = 100;
+        currentShield = MaxShield;
+        ShieldGO.SetActive(true);
     }
-    void UpdateUI()
+    public void UpdateUI()
     {
         healthBar.fillAmount = Health / 100f;
         shieldBar.fillAmount = currentShield / 100f;
@@ -51,19 +57,22 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        instance = this;
+        
         Health = 100;
         currentShield = MaxShield;
         
     }
-  
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void OnTriggerEnter(Collider other)
     {
         //print(other.transform.name);
     }
     void dead()
     {
-        GameManager.instance.changeState(4);
+        GameManager.Instance.changeState(4);
     }
     // Update is called once per frame
     void Update()
@@ -74,9 +83,6 @@ public class Player : MonoBehaviour
             
             shieldBar.fillAmount = currentShield / 100f;
         }
-        if(Health<=0)
-        {
-            dead();
-        }
+        
     }
 }

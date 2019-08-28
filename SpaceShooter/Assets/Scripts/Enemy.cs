@@ -30,87 +30,98 @@ public class Enemy : MonoBehaviour
     [SerializeField] Transform shootPos1;
     bool canshoot = true;
     Transform currentBullet1;
-    [SerializeField]  Transform WaypointManager;
     AudioSource audioController;
     void Awake()
     {
         audioController = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
         radiusCollider.radius = FOVRadius;
-        getNewTarget();
+        EnemyMG.Instance.getNewTarget();
 
     }
-    public void getDamage(int damage)
+    public void getDamage(int damage, string Tag ="Enemy")
     {
         Health -= damage;
         if (Health <= 0)
         {
-            Instantiate(GameManager.instance.ExplosionParticle, transform.position, Quaternion.identity);
+            Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
+            if (Tag == "Player")
+            {
+                GameManager.Instance.AddScore(500);
+                Instantiate(GameManager.Instance.CoinPrefab, transform.position, Quaternion.identity);
+            }
+            gameObject.SetActive(false);
         }
     }
-    void Die()
+    public void Reset(bool wasPaused)
     {
-        Destroy(gameObject);
+        if (!wasPaused)
+        {
+            rb.velocity = Vector3.zero;
+            Health = 100;
+
+        }
+        Target = EnemyMG.Instance.getNewTarget();
+        radiusCollider.radius = FOVRadius;
+        canshoot = true;
     }
-    void getNewTarget()
-    {
-        Target = WaypointManager.GetChild(Random.Range(0, WaypointManager.childCount - 1));
-    }
+
     void Update()
     {
-
-        transform.LookAt(Target);
-        rb.velocity = transform.forward * speed;
-        dist = Vector3.Distance(transform.position, Target.position);
-        if (currentState == state.flying)
+        if (Target)
         {
-            if (dist < 30f)
+            transform.LookAt(Target);
+            rb.velocity = transform.forward * speed;
+            dist = Vector3.Distance(transform.position, Target.position);
+            if (currentState == state.flying)
             {
-                getNewTarget();
-            }
+                if (dist < 30f)
+                {
+                    EnemyMG.Instance.getNewTarget();
+                }
 
-        }
-        else
-        {
-            if (dist > minDistToShoot)
-            {
-                rb.velocity = transform.forward * speed;
             }
             else
             {
-                if (canshoot)
+                if (dist > minDistToShoot)
                 {
-                    currentBullet1 = PoolSystem.Instance.getFromPool().transform;
-                    currentBullet1.position = shootPos1.position;
-                    currentBullet1.rotation = shootPos1.rotation;
-                    canshoot = false;
-                    StartCoroutine(shootCoolOff());
-                    currentState = state.flying;
-                    getNewTarget();
+                    rb.velocity = transform.forward * speed;
                 }
+                else
+                {
+                    if (canshoot)
+                    {
+                        currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+                        currentBullet1.position = shootPos1.position;
+                        currentBullet1.rotation = shootPos1.rotation;
+                        canshoot = false;
+                        StartCoroutine(shootCoolOff());
+                        currentState = state.flying;
+                        EnemyMG.Instance.getNewTarget();
+                    }
+                }
+
+
+
             }
+        }
+    }
 
 
+    IEnumerator shootCoolOff()
+    {
+        yield return ShoodDelay;
+        canshoot = true;
+        radiusCollider.radius = FOVRadius;
+    }
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
+        {
+            Target = col.transform;
+            currentState = state.chasing;
+            radiusCollider.radius = 0f;
 
         }
-
     }
-
-
-IEnumerator shootCoolOff()
-{
-    yield return ShoodDelay;
-    canshoot = true;
-    radiusCollider.radius = FOVRadius;
-}
-private void OnTriggerEnter(Collider col)
-{
-    if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
-    {
-        Target = col.transform;
-        currentState = state.chasing;
-        radiusCollider.radius = 0f;
-
-    }
-}
 }
