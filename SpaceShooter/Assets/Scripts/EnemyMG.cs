@@ -24,6 +24,7 @@ public class EnemyMG : MonoBehaviour
     }
     public void Reset(bool Respawning)
     {
+        WaypointManager.instance.Reset();
         if(Respawning)
         {
             for (int i = 0; i < currentEnemies.Count; i++)

@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 28.4
-  FOVRadius: 1633
+  FOVRadius: 125
   minDistToShoot: 65.4
   radiusCollider: {fileID: 2536612195331687896}
   shootPos1: {fileID: 2536612195213719084}

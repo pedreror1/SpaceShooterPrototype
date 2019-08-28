@@ -20,11 +20,11 @@ public class bullet : MonoBehaviour
             print(hito.transform.name);
             if(hito.transform.tag == "Player" )
             {
-                hito.transform.GetComponent<Player>().getDamage(35);
+                hito.transform.GetComponent<Player>().getDamage(10);
             }
             else if( hito.transform.tag == "Enemy")
             {
-                hito.transform.GetComponent<Enemy>().getDamage(35,bulletTag);
+                hito.transform.GetComponent<Enemy>().getDamage(50,bulletTag);
             }
         }
     }

@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] SphereCollider radiusCollider;
     Transform Target;
     Rigidbody rb;
-    WaitForSeconds ShoodDelay = new WaitForSeconds(1.0f);
+    WaitForSeconds ShoodDelay = new WaitForSeconds(2.50f);
     int Health = 100;
 
 

@@ -9,8 +9,8 @@ public class Player : MonoBehaviour
 
     int Health;
     float currentShield;
-    float  MaxShield = 40;
-    public float shieldRecoveryRate = 1f;
+    public int projectiles = 3;
+    public float shieldRecoveryRate = 10f;
     [SerializeField] Image shieldBar, healthBar;
     enum GameState
     {
@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     public void Reset()
     {
         Health = 100;
-        currentShield = MaxShield;
+        currentShield = GameManager.Instance.MaxShield;
         ShieldGO.SetActive(true);
     }
     public void UpdateUI()
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
     {
         
         Health = 100;
-        currentShield = MaxShield;
+        currentShield = GameManager.Instance.MaxShield;
         
     }
     private void Awake()
@@ -77,9 +77,9 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timewithoutDamagae > 10f && currentShield<MaxShield)
+        if (timewithoutDamagae > shieldRecoveryRate && currentShield<GameManager.Instance.MaxShield)
         {
-            currentShield += Time.deltaTime * shieldRecoveryRate;
+            currentShield += Time.deltaTime * 10f;
             
             shieldBar.fillAmount = currentShield / 100f;
         }

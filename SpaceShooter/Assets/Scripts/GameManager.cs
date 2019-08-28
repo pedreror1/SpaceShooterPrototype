@@ -17,12 +17,12 @@ public class GameManager : MonoBehaviour
     public GameObject CoinPrefab;
     public CameraShake cameraShakeController;
     public int Score = 9999;
-    int Coins = 0;
+    public int Coins = 0;
     int enemiesKilled = 0;
     int TimeRemaining = 60;
     int startTimer = 3;
-    int lifes = 3;
-
+    public int lifes = 3;
+    public float MaxShield = 40;
     public static GameManager Instance;
     [SerializeField] Text coinText,lifeText, timeText, startTimerText, enemiesKilledText,scoreText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
@@ -100,7 +100,8 @@ public class GameManager : MonoBehaviour
         startTimerText.color = Color.white;
         startTimer = 3;
         startTimerText.text = "3";
-        playSoundFX(countDownFX);
+       
+       playSoundFX(countDownFX);
         startTimerText.GetComponent<Animator>().enabled = false;
         //IMPLEMENT THIS!
 
@@ -224,6 +225,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.Shop:
+                timeText.text = "60";
                 playSoundFX(welcomeFX);
                 playMusic();
                 ShopUI.SetActive(true);
