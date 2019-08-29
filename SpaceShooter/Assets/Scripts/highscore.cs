@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using NaughtyAttributes;
 public class highscore : MonoBehaviour
 {
   
@@ -19,6 +20,12 @@ public class highscore : MonoBehaviour
     {
         instance = this;
         StartCoroutine(blink());
+    }
+    [Button("Reset Data")]
+    void resetData()
+    {
+        PlayerPrefs.DeleteAll();
+
     }
     IEnumerator blink()
     {
@@ -68,58 +75,60 @@ public class highscore : MonoBehaviour
     }
     void Update()
     {
-        if (currentLetter < 3)
+        if (GameManager.Instance.currentState == GameManager.GameState.HighScoreSave)
         {
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (currentLetter < 3)
             {
-                nextLetter();
-            }
-            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                previousLetter();
-            }
-            
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
-                timeTochange += Time.deltaTime;
-                if (timeTochange > 1f)
+                if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
                 {
                     nextLetter();
-                    timeTochange = 0f;
                 }
-            }
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
-                timeTochange += Time.deltaTime;
-                if (timeTochange > 1f)
+                else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     previousLetter();
-                    timeTochange = 0f;
+                }
+
+                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+                {
+                    timeTochange += Time.deltaTime;
+                    if (timeTochange > 1f)
+                    {
+                        nextLetter();
+                        timeTochange = 0f;
+                    }
+                }
+                if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+                {
+                    timeTochange += Time.deltaTime;
+                    if (timeTochange > 1f)
+                    {
+                        previousLetter();
+                        timeTochange = 0f;
+                    }
                 }
             }
-        }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.KeypadEnter)|| Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if (currentLetter < 2)
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.RightArrow))
             {
-                currentLetter++;
+                if (currentLetter < 2)
+                {
+                    currentLetter++;
+                }
+                else
+                {
+                    saveData();
+                    currentLetter = 5;
+                    GameManager.Instance.changeState((int)GameManager.GameState.HighScorescreen);
+                }
             }
-            else
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                saveData();
-                currentLetter = 5;
-                GameManager.Instance.changeState((int)GameManager.GameState.HighScorescreen);
+                if (currentLetter > 0)
+                {
+                    currentLetter--;
+                }
             }
-        }
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (currentLetter > 0)
-            {
-                currentLetter--;
-            }
-        }
 
-
+        }
     }
 
     void saveData()

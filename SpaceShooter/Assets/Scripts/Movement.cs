@@ -7,7 +7,7 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] [Range(0f, 100f)]
     private float mouseSpeed = 1f;
-    [SerializeField] [Range(0f, 100f)]
+    [SerializeField] [Range(0f, 200f)]
     private float movementSpeed =1f;
     [SerializeField] [Range(0f, 1000f)]
     private float rotationSpeed = 1f;

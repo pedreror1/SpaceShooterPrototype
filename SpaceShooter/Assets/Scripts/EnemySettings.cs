@@ -10,5 +10,6 @@ public class EnemySettings : ScriptableObject
     public int FOVRadius = 250;
     public Material shipColor;
     public int value = 500;
+    public int distToShoot = 30;
 
 }

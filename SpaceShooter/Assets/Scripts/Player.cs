@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     private GameObject ShieldGO;
     private bool canBeDamaged = false;
     private WaitForSeconds damageCoolOff = new WaitForSeconds(3f);
+    private Vector3 OriginalPlayerPosition;
+
     private float timewithoutDamagae = 0f;
     IEnumerator DamageCoolDown()
     {
@@ -57,13 +59,17 @@ public class Player : MonoBehaviour
     }
     public void Reset()
     {
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        transform.position = OriginalPlayerPosition;
         Health = GameManager.Instance.settings.startHealth;
         Misiles = GameManager.Instance.settings.startMisiles;
-        currentShield = GameManager.Instance.settings.startMaxShield;
+        currentShield = GameManager.Instance.MaxShield;
+        UpdateUI();
         ShieldGO.SetActive(true);
     }
     public void UpdateUI()
     {
+        
         healthBar.fillAmount = Health / 100f;
         shieldBar.fillAmount = currentShield / 100f;
 
@@ -71,19 +77,15 @@ public class Player : MonoBehaviour
     
     void Start()
     {
-        
-        Health = 100;
-        currentShield = GameManager.Instance.MaxShield;
+        OriginalPlayerPosition = transform.position;
+        Reset();
         
     }
     private void Awake()
     {
         Instance = this;
     }  
-    void dead()
-    {
-        GameManager.Instance.changeState(4);
-    }
+   
     // Update is called once per frame
     void Update()
     {

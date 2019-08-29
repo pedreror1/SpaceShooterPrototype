@@ -13,7 +13,7 @@ public class EnemyMG : MonoBehaviour
     [SerializeField]
     private Enemy enemyPrefab;
     public static EnemyMG Instance;
-
+    public Transform player;
     public Transform getNewTarget()
     {
         return Asteroids[Random.Range(0, Asteroids.Length-1)];

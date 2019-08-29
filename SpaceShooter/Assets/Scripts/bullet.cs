@@ -36,10 +36,10 @@ public class bullet : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        print("ouch");
+         
         if (other.tag == "Player")
         {
-            other.GetComponent<Player>().getDamage(10);
+            other.transform.parent.parent.GetComponent<Player>().getDamage(10);
         }
         else if (other.tag == "Enemy")
         {

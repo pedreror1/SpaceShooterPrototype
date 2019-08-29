@@ -36,7 +36,6 @@ public class GameManager : MonoBehaviour
     public AudioSource inGameMusicSource;
     public AudioSource UIMusicSource;
     public AudioSource EffectsSource;
-    Vector3 OriginalPlayerPosition;
     public AudioClip GameMusic;
     public AudioClip UIMusic;
     public AudioClip clickFX;
@@ -94,8 +93,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        OriginalPlayerPosition = Player.Instance.transform.position;
-        playMusic();
+         playMusic();
         UpdateUI();
         Instance = this;
         cameraShakeController = GetComponent<CameraShake>();

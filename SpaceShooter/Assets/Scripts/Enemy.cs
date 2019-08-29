@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         radiusCollider.radius = fovRadius;
-        EnemyMG.Instance.getNewTarget();
+        target = EnemyMG.Instance.getNewTarget();
 
     }
     public void GetDamage(int damage, string Tag ="Enemy")
@@ -68,8 +68,8 @@ public class Enemy : MonoBehaviour
         shoodDelay = new WaitForSeconds(settings.bulletCoolDown);
         speed = settings.speed;
         target = EnemyMG.Instance.getNewTarget();
-        //CHECK NUMBER OF MATERIAL
-        GetComponent<Renderer>().materials[3] = settings.shipColor;
+        minDistToShoot = settings.distToShoot;
+        GetComponentInChildren<Renderer>().materials[1] = settings.shipColor;
         fovRadius = settings.FOVRadius;
 
         radiusCollider.radius = fovRadius;
@@ -79,12 +79,14 @@ public class Enemy : MonoBehaviour
 
     void Fly(float speedMultiplier=1f)
     {
-        Vector3 targetRot = target.position - transform.position;
-        Quaternion destRot = Quaternion.Euler(targetRot);
-        destRot.z = transform.rotation.eulerAngles.z;
+        /*  Vector3 targetRot = target.position - transform.position;
+          Quaternion destRot = Quaternion.Euler(targetRot);
+          destRot.z = transform.rotation.eulerAngles.z;
 
-        Quaternion nextrot = Quaternion.Slerp(transform.rotation, destRot, Time.deltaTime);
-       // transform.LookAt(Target);
+          Quaternion nextrot = Quaternion.Slerp(transform.rotation, destRot, Time.deltaTime);
+         */
+         
+        transform.LookAt(target);
         rb.velocity = transform.forward * speed*(!canShoot?3f:1f);
         dist = Vector3.Distance(transform.position, target.position);
     }
@@ -97,16 +99,19 @@ public class Enemy : MonoBehaviour
         }
         else
         {
+            rb.velocity = Vector3.zero;
             if (canShoot)
             {
-                rb.velocity /= 6f;
+                
                 currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+                currentBullet1.GetComponent<bullet>().bulletTag = "Enemy";
                 currentBullet1.position = shootPos.position;
                 currentBullet1.rotation = shootPos.rotation;
                 canShoot = false;
+                radiusCollider.enabled = false;
                 StartCoroutine(shootCoolOff());
                 currentState = state.flying;
-                EnemyMG.Instance.getNewTarget();
+                target = EnemyMG.Instance.getNewTarget();
             }
         }
     }
@@ -118,9 +123,13 @@ public class Enemy : MonoBehaviour
             Fly();
             if (currentState == state.flying)
             {
+                if (target.tag == "Player" || target.tag == "Enemy")
+                {
+                    target= EnemyMG.Instance.getNewTarget();
+                }
                 if (dist < 30f)
                 {
-                    EnemyMG.Instance.getNewTarget();
+                    target =  EnemyMG.Instance.getNewTarget();
                 }
             }
             else
@@ -135,11 +144,20 @@ public class Enemy : MonoBehaviour
     {
         yield return shoodDelay;
         canShoot = true;
+        radiusCollider.enabled = true;
         radiusCollider.radius = fovRadius;
+        int randomChasePlayer = Random.Range(-100, 100);
+        if(randomChasePlayer<0)
+        {
+            target = EnemyMG.Instance.player;
+            currentState = state.chasing;
+            radiusCollider.radius = 0f;
+            Debug.Log("AY TE VOY!");
+        }
     }
     private void OnTriggerEnter(Collider col)
     {
-        if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
+        if (col.transform.tag == "Player" || col.transform.tag == "Enemy" && canShoot )
         {
             target = col.transform;
             currentState = state.chasing;

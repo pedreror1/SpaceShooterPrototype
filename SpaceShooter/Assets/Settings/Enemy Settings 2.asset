@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d67d2c84fdae10b42bebae56a7867531, type: 3}
   m_Name: Enemy Settings 2
   m_EditorClassIdentifier: 
-  speed: 100
-  bulletCoolDown: 2.5
+  speed: 25
+  bulletCoolDown: 5
   Health: 100
-  FOVRadius: 250
-  shipColor: {fileID: 0}
+  FOVRadius: 500
+  shipColor: {fileID: 2100000, guid: 635d56f856469c945aff15ac2572bde5, type: 2}
   value: 500
+  distToShoot: 500
