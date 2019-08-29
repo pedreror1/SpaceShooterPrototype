@@ -12,7 +12,7 @@ public class Projectile : MonoBehaviour
     private Vector3 startposition;
     private void OnTriggerEnter(Collider col)
     {
-        if (col.transform.tag == "Enemy")
+        if (!objective &&col.transform.tag == "Enemy" )
         {
             objective = col.transform;
         }
@@ -23,11 +23,20 @@ public class Projectile : MonoBehaviour
     }
     void Destroy()
     {
+        if (objective)
+        {
+            Enemy enemy = objective.GetComponentInParent<Enemy>();
+            if (enemy)
+            {
+                enemy.GetDamage(100, "Player");
+            }
+        }
         Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
         Collider[] nearObjects = Physics.OverlapSphere(transform.position, radiusCollider.radius*2);
+       
         foreach (Collider col in nearObjects)
         {
-            Enemy enemy = col.GetComponent<Enemy>();
+            Enemy enemy = col.GetComponentInParent<Enemy>();
             if (enemy)
             {
                 enemy.GetDamage(100, "Player");
@@ -40,6 +49,7 @@ public class Projectile : MonoBehaviour
     {
         if (objective)
         {
+            transform.position += transform.forward * speed;    
             transform.LookAt(objective);
             if (Vector3.Distance(transform.position, objective.position) <= 25f)
             {
@@ -48,7 +58,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            if (Vector3.Distance(transform.position, startposition) >= 725f)
+            if (Vector3.Distance(transform.position, startposition) >= 1725f)
             {
                 Destroy();
             }

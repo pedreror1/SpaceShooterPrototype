@@ -26,13 +26,16 @@ public class PlayerWeapons : MonoBehaviour
         currentBullet2.position = shootPos2.position;
         currentBullet2.rotation = shootPos2.rotation;
         currentBullet1.GetComponent<bullet>().bulletTag = "Player";
-        //currentBullet2.GetComponent<bullet>().bulletTag = "Player";
+         currentBullet2.GetComponent<bullet>().bulletTag = "Player";
         haircrossDirection = haircross.forward;
     }
     void shootProjectiles()
     {
-        projectilePrefab.gameObject.SetActive(true);
-    }
+        Projectile p= Instantiate(projectilePrefab, projectilePrefab.transform.position, projectilePrefab.transform.rotation);
+        Player.Instance.Misiles--;
+        Player.Instance.UpdateUI();
+        p.gameObject.SetActive(true);
+     }
     IEnumerator coolDownGuns()
     {
         yield return gunCoolDownDelay;
@@ -56,8 +59,7 @@ public class PlayerWeapons : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(1) && canshootProjectile && Player.Instance.Misiles > 0)
             {
-                Player.Instance.Misiles--;
-                canshootProjectile = false;
+                 canshootProjectile = false;
                 shootProjectiles();
                 StartCoroutine(coolDownRocketLauncher());
             }

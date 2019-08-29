@@ -147,17 +147,17 @@ public class Enemy : MonoBehaviour
         radiusCollider.enabled = true;
         radiusCollider.radius = fovRadius;
         int randomChasePlayer = Random.Range(-100, 100);
-        if(randomChasePlayer<0)
+        if(randomChasePlayer<50)
         {
             target = EnemyMG.Instance.player;
             currentState = state.chasing;
             radiusCollider.radius = 0f;
-            Debug.Log("AY TE VOY!");
+     
         }
     }
     private void OnTriggerEnter(Collider col)
     {
-        if (col.transform.tag == "Player" || col.transform.tag == "Enemy" && canShoot )
+        if (col.transform.tag == "Player" || col.transform.tag == "Enemy" && canShoot && target.tag!="Player")
         {
             target = col.transform;
             currentState = state.chasing;

@@ -43587,7 +43587,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 8, y: -8, z: 8, w: 1.5e-44}
+  m_BoundingSphereOverride: {x: 0.0078125, y: -0.00390625, z: -1, w: 1}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -83906,6 +83906,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 13f9a0f4e3ffc2741b845c3a2d2fc29a, type: 2}
   enemyPrefab: {fileID: 2536612196024843635, guid: 41758423651838746b20c2fab89841ab,
     type: 3}
+  player: {fileID: 1940209319}
 --- !u!1001 &1371077879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95705,6 +95706,10 @@ MonoBehaviour:
   ShieldButton: {fileID: 821762025}
   ShieldRechargeButton: {fileID: 231146399}
   RocketButton: {fileID: 1878378925}
+  LifesText: {fileID: 166047607}
+  shieldText: {fileID: 341157038}
+  shieldRechargeText: {fileID: 1565060764}
+  rocketText: {fileID: 163276613}
 --- !u!1 &1562549486
 GameObject:
   m_ObjectHideFlags: 0
@@ -110273,6 +110278,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769073493}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1769524979 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3895607368825094715, guid: e7e545abf45aa8b408a47678df35a8b4,
+    type: 3}
+  m_PrefabInstance: {fileID: 3895607370123050141}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1769524980
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769524979}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 14
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1773386414
 GameObject:
   m_ObjectHideFlags: 0
@@ -120974,6 +120998,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1939416839}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1940209319 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3895607368825094714, guid: e7e545abf45aa8b408a47678df35a8b4,
+    type: 3}
+  m_PrefabInstance: {fileID: 3895607370123050141}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1942962182
 GameObject:
   m_ObjectHideFlags: 0
@@ -133119,6 +133149,10 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 1847
       objectReference: {fileID: 0}
+    - target: {fileID: 2136850705, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
+      propertyPath: m_Radius
+      value: 16.09
+      objectReference: {fileID: 0}
     - target: {fileID: 2136850707, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
       propertyPath: shieldBar
       value: 
@@ -133127,12 +133161,21 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1213720576}
+    - target: {fileID: 2136850707, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
+      propertyPath: ShieldMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: f89ae8470e161b74e833d12339461385, type: 2}
+    - target: {fileID: 2136850707, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
+      propertyPath: MisileText
+      value: 
+      objectReference: {fileID: 570847512}
     - target: {fileID: 2995608262033775411, guid: e7e545abf45aa8b408a47678df35a8b4,
         type: 3}
       propertyPath: radiusCollider
       value: 
       objectReference: {fileID: 1614121557}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2136850705, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e7e545abf45aa8b408a47678df35a8b4, type: 3}
 --- !u!4 &3895607370123050142 stripped
 Transform:

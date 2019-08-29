@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
          playMusic();
         UpdateUI();
         Instance = this;
+        lifes = settings.lifes;
         cameraShakeController = GetComponent<CameraShake>();
     }
 
@@ -142,7 +143,7 @@ public class GameManager : MonoBehaviour
                 timeText.text = TimeRemaining.ToString().PadLeft(2, '0');
 
             }
-            if (lifes > 0)
+            if (lifes > 0 )
             {
                 Player.Instance.CanMove = false;
                 Player.Instance.CanAttack = false;
@@ -173,7 +174,7 @@ public class GameManager : MonoBehaviour
     void setupGameState(bool wasinShop=false)
     {
         MaxShield = settings.startMaxShield;
-        lifes = settings.lifes;
+        
         playMusic(true);
 
         ShopUI.SetActive(false);
@@ -219,6 +220,7 @@ public class GameManager : MonoBehaviour
     void setupMainMenu()
     {
         playMusic();
+        lifes = settings.lifes;
         pauseUI.SetActive(false);
         ShopUI.SetActive(false);
 
@@ -231,6 +233,7 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
         
         Player.Instance.Reset();
+        UpdateUI();
     }
     void setupShopState()
     {

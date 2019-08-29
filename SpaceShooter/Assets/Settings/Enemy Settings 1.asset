@@ -18,4 +18,4 @@ MonoBehaviour:
   FOVRadius: 300
   shipColor: {fileID: 2100000, guid: f746fa4825e724541b83ab4c647dabea, type: 2}
   value: 1000
-  distToShoot: 350
+  distToShoot: 100

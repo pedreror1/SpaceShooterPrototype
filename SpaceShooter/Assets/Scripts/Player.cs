@@ -17,10 +17,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Image healthBar;
     [SerializeField]
+    private Text MisileText;
+    [SerializeField]
     private Material ShieldMaterial;
     [SerializeField]
     private GameObject ShieldGO;
-    private bool canBeDamaged = false;
+    private bool canBeDamaged = true;
     private WaitForSeconds damageCoolOff = new WaitForSeconds(3f);
     private Vector3 OriginalPlayerPosition;
 
@@ -59,7 +61,8 @@ public class Player : MonoBehaviour
     }
     public void Reset()
     {
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        ShieldMaterial.SetColor("ShieldColor", Color.blue);
+      GetComponent<Rigidbody>().velocity = Vector3.zero;
         transform.position = OriginalPlayerPosition;
         Health = GameManager.Instance.settings.startHealth;
         Misiles = GameManager.Instance.settings.startMisiles;
@@ -72,6 +75,7 @@ public class Player : MonoBehaviour
         
         healthBar.fillAmount = Health / 100f;
         shieldBar.fillAmount = currentShield / 100f;
+        MisileText.text = Misiles.ToString();
 
     }
     
@@ -89,11 +93,18 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timewithoutDamagae > shieldRecoveryRate && currentShield<GameManager.Instance.MaxShield)
+        if (timewithoutDamagae > shieldRecoveryRate && currentShield < GameManager.Instance.MaxShield)
         {
-            currentShield += Time.deltaTime * 10f;
-            
+            currentShield += Time.deltaTime ;
+            if(currentShield>0 && !ShieldGO.activeSelf)
+            {
+                ShieldGO.SetActive(true);
+            }
             shieldBar.fillAmount = currentShield / 100f;
+        }
+        else
+        {
+            timewithoutDamagae += Time.deltaTime;
         }
         
     }
