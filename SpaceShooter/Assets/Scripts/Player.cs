@@ -5,43 +5,55 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public static Player Instance;
-    public bool canShootProjectiles = true;
-
-    int Health;
-    float currentShield;
     public int projectiles = 3;
     public float shieldRecoveryRate = 10f;
-    [SerializeField] Image shieldBar, healthBar;
-    enum GameState
+    public bool CanMove = false;
+    public bool CanAttack = false;
+
+    private int Health;
+    private float currentShield;
+    [SerializeField]
+    private Image shieldBar;
+    [SerializeField]
+    private Image healthBar;
+    [SerializeField]
+    private Material ShieldMaterial;
+    [SerializeField]
+    private GameObject ShieldGO;
+    private bool canBeDamaged = false;
+    private WaitForSeconds damageCoolOff = new WaitForSeconds(3f);
+    private float timewithoutDamagae = 0f;
+    IEnumerator DamageCoolDown()
     {
-        MainMenu,
-        HighScores,
-        Game,
-        Shop
+        yield return damageCoolOff;
+        canBeDamaged = true;
     }
-    public bool CanMove=false;
-    public bool CanAttack=false;
-    float timewithoutDamagae = 0f;
-    [SerializeField] GameObject ShieldGO;
-   
     public void getDamage(int damage)
     {
-        timewithoutDamagae = 0f;
-        if (currentShield <= 0)
+        if (canBeDamaged)
         {
-            ShieldGO.SetActive(false);
-            Health -= damage;
-            if (Health <= 0)
+            StartCoroutine(DamageCoolDown());
+            GameManager.Instance.cameraShakeController.ShakeCamera(4.5f, 0.33f);
+
+            timewithoutDamagae = 0f;
+            if (currentShield <= 0)
             {
-                Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
-                GameManager.Instance.changeState(6);
+                ShieldGO.SetActive(false);
+                Health -= damage;
+
+                if (Health <= 0)
+                {
+                    Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
+                    GameManager.Instance.changeState(6);
+                }
             }
+            else
+            {                
+                currentShield -= damage;
+                ShieldMaterial.SetColor("ShieldColor", Color.Lerp(Color.blue, Color.red, currentShield / GameManager.Instance.MaxShield));
+            }
+            UpdateUI();
         }
-        else
-        {
-           currentShield -= damage;
-        }
-        UpdateUI();
     }
     public void Reset()
     {
@@ -54,7 +66,7 @@ public class Player : MonoBehaviour
         healthBar.fillAmount = Health / 100f;
         shieldBar.fillAmount = currentShield / 100f;
     }
-    // Start is called before the first frame update
+    
     void Start()
     {
         
@@ -65,11 +77,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        //print(other.transform.name);
-    }
+    }  
     void dead()
     {
         GameManager.Instance.changeState(4);

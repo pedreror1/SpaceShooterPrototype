@@ -4,15 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 public class highscore : MonoBehaviour
 {
+  
+    [SerializeField] private Text nameT;
+    [SerializeField] private Text HSList;
+                       
+    [SerializeField] private  char[] name = "AAA".ToCharArray();
+
+    private int currentLetter = 0;
+    private float timeTochange = 0f;
+    private WaitForSeconds blinkDelay = new WaitForSeconds(0.25f);
+
     public static highscore instance;
-    [SerializeField] Text nameT;
-    [SerializeField] Text HSList;
-
-    [SerializeField]  char[] name = "AAA".ToCharArray();
-
-    int currentLetter = 0;
-    float timeTochange = 0f;
-    WaitForSeconds blinkDelay = new WaitForSeconds(0.25f);
     void Start()
     {
         instance = this;
@@ -27,7 +29,6 @@ public class highscore : MonoBehaviour
             {
                 if (nameT.text[currentLetter] != name[currentLetter])
                 {
-
                     nameT.text = new string(name);
                 }
                 else
@@ -153,9 +154,10 @@ public class highscore : MonoBehaviour
         }
 
         GameManager.Instance.changeState(4);
-        LoadData();
+       
     }
-    public void LoadData()
+    //remember to change button call
+    public void LoadData(bool display=false)
     {
         HSList.text = "";
         GameManager.Instance.HSData.Clear();
@@ -166,11 +168,15 @@ public class highscore : MonoBehaviour
             if (data.Length == 2)
             {
                 GameManager.Instance.HSData.Add(new GameManager.highScoreData(  data[0], int.Parse( data[1])));
-                HSList.text += "\n" + data[0] + "               " + data[1];
+                if (display)
+                {
+                    HSList.text += "\n" + data[0] + "               " + data[1];
+                }
             }
 
         }
     }
+    
 
 
 }

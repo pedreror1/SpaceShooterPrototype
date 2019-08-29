@@ -5,32 +5,32 @@ using NaughtyAttributes;
 public class Movement : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField]
-    [Range(0f, 100f)]
-    float mouseSpeed = 1f;
     [SerializeField] [Range(0f, 100f)]
-    float movementSpeed=1f;
+    private float mouseSpeed = 1f;
+    [SerializeField] [Range(0f, 100f)]
+    private float movementSpeed =1f;
+    [SerializeField] [Range(0f, 1000f)]
+    private float rotationSpeed = 1f;
     [SerializeField]
-    [Range(0f, 1000f)]
-    float rotationSpeed = 1f;
+    private float hairCrossPosZ = 15f;
     [SerializeField]
-    float hairCrossPosZ = 15f;
+    private Transform hairCross;
     [SerializeField]
-    Transform hairCross;
+    private Transform SpaceShip;
     [SerializeField]
-    Transform SpaceShip;
-    [SerializeField]
-    Transform CameraTransform;
+    private Transform CameraTransform;
+
+    private float yaw, pitch;
+    [SerializeField] [MinMaxSlider(0f, 1920)]
+    private Vector2 cameraHorizontalRange;
+    [SerializeField] [MinMaxSlider(0f, 1080)]
+    private Vector2 cameraVerticalRange;
+    private Vector2 cameraOffset = Vector2.zero;
+
+    private Rigidbody rb;
+
     public Vector3 mousePosition;
     public bool invertY = true;
-    float yaw, pitch;
-    [MinMaxSlider(0f, 1920)]
-    [SerializeField] Vector2 cameraHorizontalRange;
-    [MinMaxSlider(0f, 1080)]
-    [SerializeField] Vector2 cameraVerticalRange;
-    Vector2 cameraOffset = Vector2.zero;
-
-    Rigidbody rb;
     void Start()
     {
         cameraHorizontalRange.x = Screen.width / 2f - Screen.width / 3f;
@@ -47,37 +47,27 @@ public class Movement : MonoBehaviour
     {
         if (Input.mousePosition.x < cameraHorizontalRange.x)
         {
-            
-
             cameraOffset.x = -10f;
         }
         else if (Input.mousePosition.x > cameraHorizontalRange.y)
         {
-             
             cameraOffset.x = 10f;
         }
         else
         {
-             
             cameraOffset.x = 0f;
         }
 
         if (Input.mousePosition.y < cameraVerticalRange.x)
         {
-             
-
             cameraOffset.y = -10f;
         }
         else if (Input.mousePosition.y > cameraVerticalRange.y)
         {
-            
-
             cameraOffset.y = 10f;
         }
         else
         {
-             
-
             cameraOffset.y = 0f;
         }
     }

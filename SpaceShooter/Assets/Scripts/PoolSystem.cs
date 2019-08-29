@@ -11,7 +11,7 @@ public class PoolSystem : MonoBehaviour {
     }
     private Queue<GameObject> availableObjects = new Queue<GameObject>();
     [SerializeField]
-    GameObject prefab;
+    private GameObject prefab;
     private void Awake()
     {
         Instance = this;
@@ -43,6 +43,4 @@ public class PoolSystem : MonoBehaviour {
         instance.SetActive(false);
         availableObjects.Enqueue(instance);
     }
-
-     
 }

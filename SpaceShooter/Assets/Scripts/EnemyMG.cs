@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class EnemyMG : MonoBehaviour
 {
-    List<Enemy> currentEnemies = new List<Enemy>();
-    Transform[] Asteroids;
-    [SerializeField] Transform AsteroidsMG;
-    [SerializeField]  Enemy[] enemiesPresets;
+    private List<Enemy> currentEnemies = new List<Enemy>();
+    private Transform[] Asteroids;
+    [SerializeField] [Tooltip("Put Here The parent of Valid Waypoints")]
+    private Transform AsteroidsMG;
+    [SerializeField]
+    private Enemy[] enemiesPresets;
     public static EnemyMG Instance;
 
     public Transform getNewTarget()
@@ -29,11 +31,8 @@ public class EnemyMG : MonoBehaviour
         {
             for (int i = 0; i < currentEnemies.Count; i++)
             {
-                //on dead remove from here!
-               
                 currentEnemies[i].gameObject.SetActive(true);
                 currentEnemies[i].Reset(true);
-                
             }
         }
         else
@@ -43,12 +42,11 @@ public class EnemyMG : MonoBehaviour
                 currentEnemies[i].gameObject.SetActive(true);
                 currentEnemies[i].Reset(false);
             }
-                for (int i = 0; i < 20; i++)
-            {
-                currentEnemies.Add(Instantiate(enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)], 
-                    getNewTarget().position, Quaternion.identity));
-                currentEnemies[i].Reset(false);
 
+            for (int i = 0; i < 20; i++)
+            {
+                currentEnemies.Add(Instantiate(enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)],getNewTarget().position, Quaternion.identity));
+                currentEnemies[i].Reset(false);
             }
         }
     }
@@ -56,14 +54,11 @@ public class EnemyMG : MonoBehaviour
     {
         for (int i = 0; i < currentEnemies.Count; i++)
         {
-            //on dead remove from here!
-
             Destroy(currentEnemies[i].gameObject);
             currentEnemies.RemoveAt(i);
-           
         }
     }
-    // Start is called before the first frame update
+     
     private void Awake()
     {
         Instance = this;
@@ -72,11 +67,5 @@ public class EnemyMG : MonoBehaviour
     {
         
         Asteroids = AsteroidsMG.GetComponentsInChildren<Transform>(); 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

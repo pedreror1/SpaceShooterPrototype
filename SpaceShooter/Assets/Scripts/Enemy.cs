@@ -4,45 +4,41 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [Range(0f, 100f)]
-    [SerializeField]
-    float speed = 1f;
-    [Range(0f, 10000f)]
-    [SerializeField]
-    float FOVRadius = 1f;
-    [Range(0f, 100f)]
-    [SerializeField]
-    float minDistToShoot = 1f;
-    float dist;
+    [Range(0f, 100f)][SerializeField]
+    private float speed = 1f;
+    [Range(0f, 10000f)] [SerializeField]
+    private float fovRadius = 1f;
+    [Range(0f, 100f)][SerializeField]
+    private float minDistToShoot = 1f;
     [SerializeField] SphereCollider radiusCollider;
-    Transform Target;
-    Rigidbody rb;
-    WaitForSeconds ShoodDelay = new WaitForSeconds(2.50f);
-    int Health = 100;
-
-
+    private float dist;
+    private Transform target;
+    private Rigidbody rb;
+    private WaitForSeconds shoodDelay = new WaitForSeconds(2.50f);
+    private int health = 100;
     enum state
     {
         flying,
         chasing
     }
-    state currentState = state.flying;
-    [SerializeField] Transform shootPos1;
-    bool canshoot = true;
-    Transform currentBullet1;
-    AudioSource audioController;
+    private state currentState = state.flying;
+    [SerializeField]
+    private Transform shootPos;
+    private bool canShoot = true;
+    private Transform currentBullet1;
+ 
+
     void Awake()
     {
-        audioController = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
-        radiusCollider.radius = FOVRadius;
+        radiusCollider.radius = fovRadius;
         EnemyMG.Instance.getNewTarget();
 
     }
-    public void getDamage(int damage, string Tag ="Enemy")
+    public void GetDamage(int damage, string Tag ="Enemy")
     {
-        Health -= damage;
-        if (Health <= 0)
+        health -= damage;
+        if (health <= 0)
         {
             Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
             if (Tag == "Player")
@@ -58,51 +54,64 @@ public class Enemy : MonoBehaviour
         if (!wasPaused)
         {
             rb.velocity = Vector3.zero;
-            Health = 100;
+            health = 100;
 
         }
-        Target = EnemyMG.Instance.getNewTarget();
-        radiusCollider.radius = FOVRadius;
-        canshoot = true;
+        target = EnemyMG.Instance.getNewTarget();
+        radiusCollider.radius = fovRadius;
+        canShoot = true;
+    }
+
+
+    void Fly(float speedMultiplier=1f)
+    {
+        Vector3 targetRot = target.position - transform.position;
+        Quaternion destRot = Quaternion.Euler(targetRot);
+        destRot.z = transform.rotation.eulerAngles.z;
+
+        Quaternion nextrot = Quaternion.Slerp(transform.rotation, destRot, Time.deltaTime);
+       // transform.LookAt(Target);
+        rb.velocity = transform.forward * speed*(!canShoot?3f:1f);
+        dist = Vector3.Distance(transform.position, target.position);
+    }
+    void ChaseOtherShip()
+    {
+        if (dist > minDistToShoot)
+        {
+            rb.velocity *= 2f;
+
+        }
+        else
+        {
+            if (canShoot)
+            {
+                rb.velocity /= 6f;
+                currentBullet1 = PoolSystem.Instance.getFromPool().transform;
+                currentBullet1.position = shootPos.position;
+                currentBullet1.rotation = shootPos.rotation;
+                canShoot = false;
+                StartCoroutine(shootCoolOff());
+                currentState = state.flying;
+                EnemyMG.Instance.getNewTarget();
+            }
+        }
     }
 
     void Update()
     {
-        if (Target)
+        if (target)
         {
-            transform.LookAt(Target);
-            rb.velocity = transform.forward * speed;
-            dist = Vector3.Distance(transform.position, Target.position);
+            Fly();
             if (currentState == state.flying)
             {
                 if (dist < 30f)
                 {
                     EnemyMG.Instance.getNewTarget();
                 }
-
             }
             else
             {
-                if (dist > minDistToShoot)
-                {
-                    rb.velocity = transform.forward * speed;
-                }
-                else
-                {
-                    if (canshoot)
-                    {
-                        currentBullet1 = PoolSystem.Instance.getFromPool().transform;
-                        currentBullet1.position = shootPos1.position;
-                        currentBullet1.rotation = shootPos1.rotation;
-                        canshoot = false;
-                        StartCoroutine(shootCoolOff());
-                        currentState = state.flying;
-                        EnemyMG.Instance.getNewTarget();
-                    }
-                }
-
-
-
+                ChaseOtherShip();
             }
         }
     }
@@ -110,15 +119,15 @@ public class Enemy : MonoBehaviour
 
     IEnumerator shootCoolOff()
     {
-        yield return ShoodDelay;
-        canshoot = true;
-        radiusCollider.radius = FOVRadius;
+        yield return shoodDelay;
+        canShoot = true;
+        radiusCollider.radius = fovRadius;
     }
     private void OnTriggerEnter(Collider col)
     {
         if (col.transform.tag == "Player" || col.transform.tag == "Enemy")
         {
-            Target = col.transform;
+            target = col.transform;
             currentState = state.chasing;
             radiusCollider.radius = 0f;
 

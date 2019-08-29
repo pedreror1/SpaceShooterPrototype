@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+     void Start()
     {
         Destroy(gameObject, 3f);
     }
@@ -17,9 +16,5 @@ public class Coin : MonoBehaviour
             GameManager.Instance.AddCoin();
         }
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

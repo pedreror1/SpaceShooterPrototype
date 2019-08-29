@@ -5,12 +5,14 @@ using UnityEngine;
 public class bullet : MonoBehaviour
 {
     [SerializeField] [Range(0f, 100f)]
-    public float speed = 1f;
-    [SerializeField]
-    [Range(0f, 100f)]
-    public float fov = 1f;
-    WaitForSeconds lifeSpan = new WaitForSeconds(3f);
+    private float speed = 1f;
+    [SerializeField] [Range(0f, 100f)]
+    private float fov = 1f;
+    private WaitForSeconds lifeSpan = new WaitForSeconds(3f);
+
     public string bulletTag="Enemy";
+
+    //TODO REMOVE THIS
     private void checkCollision()
     {
         Ray ray = new Ray(transform.position, transform.forward);
@@ -24,20 +26,31 @@ public class bullet : MonoBehaviour
             }
             else if( hito.transform.tag == "Enemy")
             {
-                hito.transform.GetComponent<Enemy>().getDamage(50,bulletTag);
+                hito.transform.GetComponent<Enemy>().GetDamage(50,bulletTag);
             }
         }
     }
+    private void OnEnable()
+    {
+        StartCoroutine(destroy());
+    }
     private void OnTriggerEnter(Collider other)
     {
-       // print(other.transform.name);
+        if (other.tag == "Player")
+        {
+            other.GetComponent<Player>().getDamage(10);
+        }
+        else if (other.tag == "Enemy")
+        {
+            other.GetComponent<Enemy>().GetDamage(50, bulletTag);
+        }
     }
     void FixedUpdate()
     {
         transform.position += transform.forward * speed;
         transform.Rotate(0f, 0f, 10f);
-        checkCollision();
-        StartCoroutine(destroy());
+        //checkCollision();
+        
     }
     IEnumerator destroy()
     {

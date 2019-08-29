@@ -5,13 +5,12 @@ using NaughtyAttributes;
 public class WaypointManager : MonoBehaviour
 {
     [SerializeField][MinMaxSlider(-2000f, 2000f)]
-    Vector2 xRange;
+    private Vector2 xRange;
     [SerializeField]
-    [MinMaxSlider(-2000f, 2000f)]
-    Vector2 yRange;
-    [SerializeField]
-    [MinMaxSlider(-2000f, 2000f)]
-    Vector2 zRange;
+    [MinMaxSlider(-2000f, 2000f)] private Vector2 yRange;
+    [SerializeField] [MinMaxSlider(-2000f, 2000f)]
+    private Vector2 zRange;
+
     public static WaypointManager instance;
     void Start()
     {

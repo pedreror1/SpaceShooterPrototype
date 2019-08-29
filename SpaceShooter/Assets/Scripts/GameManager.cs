@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,15 +32,15 @@ public class GameManager : MonoBehaviour
     public AudioSource UIMusicSource;
     public AudioSource EffectsSource;
     Vector3 OriginalPlayerPosition;
-    [SerializeField] AudioClip GameMusic;
-    [SerializeField] AudioClip UIMusic;
-    [SerializeField] AudioClip clickFX;
-    [SerializeField] AudioClip countDownFX;
-    [SerializeField] AudioClip startFX;
-    [SerializeField] AudioClip welcomeFX;
-    [SerializeField] AudioClip thanksFX;
-    [SerializeField] AudioClip nextLevelFX;
-    [SerializeField] AudioClip GameOverFX;
+    public AudioClip GameMusic;
+    public AudioClip UIMusic;
+    public AudioClip clickFX;
+    public AudioClip countDownFX;
+    public AudioClip startFX;
+    public AudioClip welcomeFX;
+    public AudioClip thanksFX;
+    public AudioClip nextLevelFX;
+    public AudioClip GameOverFX;
     public struct highScoreData
     {
         public string name;
@@ -103,7 +104,7 @@ public class GameManager : MonoBehaviour
        
        playSoundFX(countDownFX);
         startTimerText.GetComponent<Animator>().enabled = false;
-        //IMPLEMENT THIS!
+         
 
         while (startTimer > 0)
         {
@@ -165,125 +166,159 @@ public class GameManager : MonoBehaviour
     {
         EffectsSource.PlayOneShot(clip);
     }
+    void setupGameState(bool wasinShop=false)
+    {
+        playMusic(true);
+
+        ShopUI.SetActive(false);
+
+        StartCoroutine(GameTime());
+        MainMenuUI.SetActive(false);
+        GameUI.SetActive(true);
+
+        Cursor.visible = false;
+    }
+    void setupHighscoreState()
+    {
+        Score = 0;
+        Coins = 0;
+        Player.Instance.UpdateUI();
+        playMusic();
+        ShopUI.SetActive(false);
+        GameUI.SetActive(false);
+        MainMenuUI.SetActive(false);
+
+        HighScoreSaveUI.SetActive(false);
+        HighscoreMainUI.SetActive(true);
+        highscore.instance.LoadData();
+    }
+    void setupSaveHighscoreState()
+    {
+        playSoundFX(GameOverFX);
+        Score += (Coins * 50);
+        Coins = 0;
+        Player.Instance.UpdateUI();
+        EnemiesManager.GameOver();
+        playMusic();
+        ShopUI.SetActive(false);
+
+        GameUI.SetActive(false);
+        Player.Instance.CanMove = false;
+        Player.Instance.CanAttack = false;
+        Cursor.visible = true;
+        HighScoreSaveUI.SetActive(true);
+        EnemiesManager.gameObject.SetActive(false);
+    }
+
+    void setupMainMenu()
+    {
+        playMusic();
+        pauseUI.SetActive(false);
+        ShopUI.SetActive(false);
+
+        HighScoreSaveUI.SetActive(false);
+        HighscoreMainUI.SetActive(false);
+        MainMenuUI.SetActive(true);
+        GameUI.SetActive(false);
+        Player.Instance.CanMove = false;
+        Player.Instance.CanAttack = false;
+        Cursor.visible = true;
+        MaxShield = 40;
+        Player.Instance.projectiles = 3;
+        Player.Instance.Reset();
+    }
+    void setupShopState()
+    {
+        timeText.text = "60";
+        playSoundFX(welcomeFX);
+        playMusic();
+        ShopUI.SetActive(true);
+
+        GameUI.SetActive(false);
+        Player.Instance.CanMove = false;
+        Player.Instance.CanAttack = false;
+        Cursor.visible = true;
+        EnemiesManager.Pause();
+    }
+    private void setupPauseState()
+    {
+        isPaused = !isPaused;
+        if (isPaused)
+        {
+            playMusic();
+
+            GameUI.SetActive(false);
+            pauseUI.SetActive(true);
+            Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            Player.Instance.CanMove = false;
+            Player.Instance.CanAttack = false;
+            Cursor.visible = true;
+            EnemiesManager.gameObject.SetActive(false);
+        }
+        else
+        {
+            playMusic();
+            GameUI.SetActive(true);
+            pauseUI.SetActive(false);
+            Player.Instance.CanMove = true;
+            Player.Instance.CanAttack = true;
+            Cursor.visible = false;
+            EnemiesManager.gameObject.SetActive(true);
+        }
+    }
+
+    private void setupRespawnState()
+    {
+        lifes--;
+        UpdateUI();
+
+
+        EnemiesManager.Pause();
+        if (lifes <= 0)
+        {
+            changeState((int)GameState.HighScoreSave);
+        }
+        else
+        {
+            //IMPLEMENT THIS!
+            Player.Instance.Reset();
+
+            StartCoroutine(GameTime(true));
+            Player.Instance.CanMove = false;
+            Player.Instance.CanAttack = false;
+        }
+    }
     public void changeState(int newState)
     {
         currentState = (GameState)newState;
         switch (currentState)
         {
             case GameState.Game:
-                playMusic(true);
-
-                ShopUI.SetActive(false);
-
-                StartCoroutine(GameTime());
-                MainMenuUI.SetActive(false);
-                GameUI.SetActive(true);
-
-                Cursor.visible = false;
+                setupGameState();
                 break;
             case GameState.HighScoreSave:
-                playSoundFX(GameOverFX);
-                Score += (Coins * 50);
-                Coins = 0;
-                Player.Instance.UpdateUI();
-                EnemiesManager.GameOver();
-                playMusic();
-                ShopUI.SetActive(false);
-
-                GameUI.SetActive(false);
-                Player.Instance.CanMove = false;
-                Player.Instance.CanAttack = false;
-                Cursor.visible = true;
-                HighScoreSaveUI.SetActive(true);
-                EnemiesManager.gameObject.SetActive(false);
+                setupSaveHighscoreState();
                 break;
             case GameState.HighScorescreen:
-                Score = 0;
-                Coins = 0;
-                Player.Instance.UpdateUI();
-                playMusic();
-                ShopUI.SetActive(false);
-                GameUI.SetActive(false);
-                MainMenuUI.SetActive(false);
-
-                HighScoreSaveUI.SetActive(false);
-                HighscoreMainUI.SetActive(true);
-                highscore.instance.LoadData();
+                setupHighscoreState();
                 break;
             case GameState.MainMenu:
-                playMusic();
-                pauseUI.SetActive(false);
-                ShopUI.SetActive(false);
-
-                HighScoreSaveUI.SetActive(false);
-                HighscoreMainUI.SetActive(false);
-                MainMenuUI.SetActive(true);
-                GameUI.SetActive(false);
-                Player.Instance.CanMove = false;
-                Player.Instance.CanAttack = false;
-                Cursor.visible = true;
+                setupMainMenu();
 
                 break;
             case GameState.Shop:
-                timeText.text = "60";
-                playSoundFX(welcomeFX);
-                playMusic();
-                ShopUI.SetActive(true);
-
-                GameUI.SetActive(false);
-                Player.Instance.CanMove = false;
-                Player.Instance.CanAttack = false;
-                Cursor.visible = true;
-                EnemiesManager.Pause();
+                setupShopState();
                 break;
             case GameState.Pause:
 
-                isPaused = !isPaused;
-                if (isPaused)
-                {
-                    playMusic();
-
-                    GameUI.SetActive(false);
-                    pauseUI.SetActive(true);
-                    Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    Player.Instance.CanMove = false;
-                    Player.Instance.CanAttack = false;
-                    Cursor.visible = true;
-                    EnemiesManager.gameObject.SetActive(false);
-                }
-                else
-                {
-                    playMusic();
-                    GameUI.SetActive(true);
-                    pauseUI.SetActive(false);
-                    Player.Instance.CanMove = true;
-                    Player.Instance.CanAttack = true;
-                    Cursor.visible = false;
-                    EnemiesManager.gameObject.SetActive(true);
-                }
+                setupPauseState();
                 break;
             case GameState.resspawning:
-                lifes--;
-                UpdateUI();
-
-
-                EnemiesManager.Pause();
-                if (lifes <= 0)
-                {
-                    changeState((int)GameState.HighScoreSave);
-                }
-                else
-                {
-                    //IMPLEMENT THIS!
-                    Player.Instance.Reset();
-
-                    StartCoroutine(GameTime(true));
-                    Player.Instance.CanMove = false;
-                    Player.Instance.CanAttack = false;
-                }
+                setupRespawnState();
                 break;
         }
     }
+
     // Update is called once per frame
     void Update()
     {

@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
-    bool isShaking = false;
-   [SerializeField] Transform cameraTransform;
-    IEnumerator Shake(float duration, float magnitude)
+    private bool isShaking = false;
+    [SerializeField] [Tooltip("Put your Camera here")]
+    private Transform objectToShake;
+    IEnumerator Shake(float Duration, float Magnitude)
     {
-        Vector3 originalPos = cameraTransform.localPosition;
+        Vector3 originalPos = objectToShake.localPosition;
         float elapsed = 0.0f;
-        while (elapsed < duration)
+        while (elapsed < Duration)
         {
-            float x = Random.Range(-1, 1) * magnitude;
-            float y = Random.Range(-1, 1) * magnitude;
-            cameraTransform.localPosition = new Vector3(x, y, originalPos.z);
+            float x = Random.Range(-1, 1) * Magnitude;
+            float y = Random.Range(-1, 1) * Magnitude;
+            objectToShake.localPosition = new Vector3(x, y, originalPos.z);
             elapsed += Time.deltaTime;
             yield return null;
 
         }
-        cameraTransform.localPosition = originalPos;
+        objectToShake.localPosition = originalPos;
         isShaking = false;
     }
-    public void ShakeCamera(float Magnitude, float duration)
+    public void ShakeCamera(float Magnitude, float Duration)
     {
         if (!isShaking)
         {
-            StartCoroutine(Shake(duration, Magnitude));
+            StartCoroutine(Shake(Duration, Magnitude));
         }
     }
 }
