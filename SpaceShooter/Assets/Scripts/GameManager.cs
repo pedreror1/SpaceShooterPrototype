@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject ExplosionParticle;
     public GameObject CoinPrefab;
     public CameraShake cameraShakeController;
-    public int Score = 9999;
+    public int Score = 0;
     public int Coins = 0;
     int enemiesKilled = 0;
     int TimeRemaining = 60;
@@ -25,7 +25,12 @@ public class GameManager : MonoBehaviour
     public int lifes = 3;
     public float MaxShield = 40;
     public static GameManager Instance;
-    [SerializeField] Text coinText,lifeText, timeText, startTimerText, enemiesKilledText,scoreText;
+    [SerializeField] Text coinText;
+    [SerializeField] Text lifeText;
+    [SerializeField] Text timeText;
+    [SerializeField] Text startTimerText;
+    [SerializeField] Text enemiesKilledText;
+    [SerializeField] Text scoreText;
     WaitForSeconds timerCycleLapse = new WaitForSeconds(1f);
     int level = 1;
     public AudioSource inGameMusicSource;
@@ -41,6 +46,7 @@ public class GameManager : MonoBehaviour
     public AudioClip thanksFX;
     public AudioClip nextLevelFX;
     public AudioClip GameOverFX;
+    public GameSettings settings;
     public struct highScoreData
     {
         public string name;
@@ -130,7 +136,7 @@ public class GameManager : MonoBehaviour
         startTimerText.GetComponent<Animator>().enabled = true;
         if (!Respawning)
         {
-            TimeRemaining = 60;
+            TimeRemaining = settings.roundDuration;
             while (TimeRemaining > 0)
             {
                 yield return timerCycleLapse;
@@ -168,6 +174,8 @@ public class GameManager : MonoBehaviour
     }
     void setupGameState(bool wasinShop=false)
     {
+        MaxShield = settings.startMaxShield;
+        lifes = settings.lifes;
         playMusic(true);
 
         ShopUI.SetActive(false);
@@ -223,8 +231,7 @@ public class GameManager : MonoBehaviour
         Player.Instance.CanMove = false;
         Player.Instance.CanAttack = false;
         Cursor.visible = true;
-        MaxShield = 40;
-        Player.Instance.projectiles = 3;
+        
         Player.Instance.Reset();
     }
     void setupShopState()

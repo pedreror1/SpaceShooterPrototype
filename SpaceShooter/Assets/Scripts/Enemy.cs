@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour
     private Rigidbody rb;
     private WaitForSeconds shoodDelay = new WaitForSeconds(2.50f);
     private int health = 100;
+    private int value = 500;
+    bool canBeDamaged = true;
     enum state
     {
         flying,
@@ -37,27 +39,39 @@ public class Enemy : MonoBehaviour
     }
     public void GetDamage(int damage, string Tag ="Enemy")
     {
-        health -= damage;
-        if (health <= 0)
+        if (canBeDamaged)
         {
-            Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
-            if (Tag == "Player")
+          
+            health -= damage;
+            if (health <= 0)
             {
-                GameManager.Instance.AddScore(500);
-                Instantiate(GameManager.Instance.CoinPrefab, transform.position, Quaternion.identity);
+                canBeDamaged = false;
+                Instantiate(GameManager.Instance.ExplosionParticle, transform.position, Quaternion.identity);
+                if (Tag == "Player")
+                {
+                    GameManager.Instance.AddScore(value);
+                    Instantiate(GameManager.Instance.CoinPrefab, transform.position, Quaternion.identity);
+                }
+                gameObject.SetActive(false);
             }
-            gameObject.SetActive(false);
         }
     }
-    public void Reset(bool wasPaused)
+    public void Reset(bool wasPaused,EnemySettings settings)
     {
         if (!wasPaused)
         {
             rb.velocity = Vector3.zero;
-            health = 100;
+            health = settings.Health;
 
         }
+        value = settings.value;
+        shoodDelay = new WaitForSeconds(settings.bulletCoolDown);
+        speed = settings.speed;
         target = EnemyMG.Instance.getNewTarget();
+        //CHECK NUMBER OF MATERIAL
+        GetComponent<Renderer>().materials[3] = settings.shipColor;
+        fovRadius = settings.FOVRadius;
+
         radiusCollider.radius = fovRadius;
         canShoot = true;
     }

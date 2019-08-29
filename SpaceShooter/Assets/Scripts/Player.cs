@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public static Player Instance;
-    public int projectiles = 3;
+    public int Misiles = 3;
     public float shieldRecoveryRate = 10f;
     public bool CanMove = false;
     public bool CanAttack = false;
@@ -57,14 +57,16 @@ public class Player : MonoBehaviour
     }
     public void Reset()
     {
-        Health = 100;
-        currentShield = GameManager.Instance.MaxShield;
+        Health = GameManager.Instance.settings.startHealth;
+        Misiles = GameManager.Instance.settings.startMisiles;
+        currentShield = GameManager.Instance.settings.startMaxShield;
         ShieldGO.SetActive(true);
     }
     public void UpdateUI()
     {
         healthBar.fillAmount = Health / 100f;
         shieldBar.fillAmount = currentShield / 100f;
+
     }
     
     void Start()

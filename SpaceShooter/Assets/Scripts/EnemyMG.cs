@@ -9,7 +9,9 @@ public class EnemyMG : MonoBehaviour
     [SerializeField] [Tooltip("Put Here The parent of Valid Waypoints")]
     private Transform AsteroidsMG;
     [SerializeField]
-    private Enemy[] enemiesPresets;
+    private EnemySettings[] enemiesPresets;
+    [SerializeField]
+    private Enemy enemyPrefab;
     public static EnemyMG Instance;
 
     public Transform getNewTarget()
@@ -32,7 +34,8 @@ public class EnemyMG : MonoBehaviour
             for (int i = 0; i < currentEnemies.Count; i++)
             {
                 currentEnemies[i].gameObject.SetActive(true);
-                currentEnemies[i].Reset(true);
+                EnemySettings settings = enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)];
+                currentEnemies[i].Reset(true,settings);
             }
         }
         else
@@ -40,13 +43,15 @@ public class EnemyMG : MonoBehaviour
             for (int i = 0; i < currentEnemies.Count; i++)
             {
                 currentEnemies[i].gameObject.SetActive(true);
-                currentEnemies[i].Reset(false);
+                EnemySettings settings = enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)];
+                currentEnemies[i].Reset(true, settings);
             }
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < GameManager.Instance.settings.EnemiesPerRound; i++)
             {
-                currentEnemies.Add(Instantiate(enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)],getNewTarget().position, Quaternion.identity));
-                currentEnemies[i].Reset(false);
+                currentEnemies.Add(Instantiate(enemyPrefab,getNewTarget().position, Quaternion.identity));
+                EnemySettings settings = enemiesPresets[Random.Range(0, enemiesPresets.Length - 1)];
+                currentEnemies[i].Reset(true, settings);
             }
         }
     }

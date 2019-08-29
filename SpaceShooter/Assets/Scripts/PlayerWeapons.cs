@@ -54,9 +54,9 @@ public class PlayerWeapons : MonoBehaviour
                 canshoot = false;
                 StartCoroutine(coolDownGuns());
             }
-            if (Input.GetMouseButtonDown(1) && canshootProjectile && Player.Instance.projectiles > 0)
+            if (Input.GetMouseButtonDown(1) && canshootProjectile && Player.Instance.Misiles > 0)
             {
-                Player.Instance.projectiles--;
+                Player.Instance.Misiles--;
                 canshootProjectile = false;
                 shootProjectiles();
                 StartCoroutine(coolDownRocketLauncher());

@@ -9928,6 +9928,7 @@ MonoBehaviour:
   thanksFX: {fileID: 8300000, guid: 4c723eb3d85454b26bf51f6ca05d1aa6, type: 3}
   nextLevelFX: {fileID: 8300000, guid: 8a617d4b0dda8481a8222dfa1822bab0, type: 3}
   GameOverFX: {fileID: 8300000, guid: bd9289115455f435ebd716f54d6d67b6, type: 3}
+  settings: {fileID: 11400000, guid: ba2e254d9a7c38f48a18529acef4eb5d, type: 2}
   currentState: 1
 --- !u!4 &163087492
 Transform:
@@ -84205,7 +84206,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AsteroidsMG: {fileID: 212408292}
   enemiesPresets:
-  - {fileID: 2536612196024843635, guid: 41758423651838746b20c2fab89841ab, type: 3}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 3f55b37caa7fbf14f97bbce47d8c0beb, type: 2}
+  - {fileID: 11400000, guid: ddfd01674031c9248b7107302b121f6b, type: 2}
+  - {fileID: 11400000, guid: 13f9a0f4e3ffc2741b845c3a2d2fc29a, type: 2}
+  enemyPrefab: {fileID: 0}
 --- !u!1001 &1371077879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -132207,7 +132212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48c4670cf25fed940aaecdc160d0868e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectiles: 3
+  Misiles: 3
   shieldRecoveryRate: 1
   CanMove: 0
   CanAttack: 0
