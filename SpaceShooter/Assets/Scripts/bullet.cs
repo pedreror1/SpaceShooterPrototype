@@ -36,13 +36,14 @@ public class bullet : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        print("ouch");
         if (other.tag == "Player")
         {
             other.GetComponent<Player>().getDamage(10);
         }
         else if (other.tag == "Enemy")
         {
-            other.GetComponent<Enemy>().GetDamage(50, bulletTag);
+            other.GetComponentInParent<Enemy>().GetDamage(50, bulletTag);
         }
     }
     void FixedUpdate()

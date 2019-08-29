@@ -15,8 +15,8 @@ TagManager:
   - 
   - 
   - postProcess
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 

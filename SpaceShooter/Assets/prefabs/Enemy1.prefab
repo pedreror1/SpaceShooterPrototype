@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2536612195213719084}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: shootpos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 2536612196024843634}
   - component: {fileID: 2536612196024843635}
   - component: {fileID: 2536612196024843633}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -76,10 +76,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 28.4
-  FOVRadius: 125
+  fovRadius: 1
   minDistToShoot: 65.4
   radiusCollider: {fileID: 2536612195331687896}
-  shootPos1: {fileID: 2536612195213719084}
+  shootPos: {fileID: 2536612195213719084}
 --- !u!54 &2536612196024843633
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -133,6 +133,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: spaceCraft3
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 417146302c8cb5543b38aec295e11f7a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 417146302c8cb5543b38aec295e11f7a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 417146302c8cb5543b38aec295e11f7a,
         type: 3}

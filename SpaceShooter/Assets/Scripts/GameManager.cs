@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
 
         HighScoreSaveUI.SetActive(false);
         HighscoreMainUI.SetActive(true);
-        highscore.instance.LoadData();
+        highscore.instance.LoadData(true);
     }
     void setupSaveHighscoreState()
     {
